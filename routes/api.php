@@ -5,8 +5,18 @@ use App\Http\Controllers\Mobile\Auth\Register;
 use App\Http\Controllers\Mobile\Auth\ResetPassword;
 use App\Http\Controllers\Mobile\Auth\TwoFactor;
 use App\Http\Controllers\Mobile\Auth\VerifyEmail;
-use App\Http\Controllers\Utilities\Countries;
-use App\Http\Controllers\Utilities\Users;
+use App\Http\Controllers\UserModules\BalanceData;
+use App\Http\Controllers\UserModules\SignalData;
+use App\Http\Controllers\UserModules\TransactionModule\BuyData;
+use App\Http\Controllers\UserModules\TransactionModule\FiatDepositData;
+use App\Http\Controllers\UserModules\TransactionModule\FiatWithdrawalData;
+use App\Http\Controllers\UserModules\TransactionModule\SellData;
+use App\Http\Controllers\UserModules\TransactionModule\SwapData;
+use App\Http\Controllers\UserModules\TransactionModule\TransactionData;
+use App\Http\Controllers\UserModules\TransactionModule\WithdrawalData;
+use App\Http\Controllers\UserModules\UserData;
+use App\Http\Controllers\UserModules\WalletData;
+use App\Http\Controllers\Utilities\Utilities;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -47,124 +57,129 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::post('resend-password-reset',[ResetPassword::class,'resendPasswordReset'])
         ->name('auth.resend-password-reset');//resend two factor code
 
-    Route::post('user/set_phone',[Users::class,'setPhone'])
+    //Data in the UserData Module
+    Route::post('user/user_details',[UserData::class,'getLoggedInUserDetails']);
+    Route::post('user/set_phone',[UserData::class,'setPhone'])
         ->middleware('abilities:user:account');
-    Route::post('user/enter_phone_pin',[Users::class,'verifyPhone'])
+    Route::post('user/enter_phone_pin',[UserData::class,'verifyPhone'])
         ->middleware('abilities:user:account');
-    Route::post('user/resend_phone_verify',[Users::class,'resendPhoneVerify'])
+    Route::post('user/resend_phone_verify',[UserData::class,'resendPhoneVerify'])
         ->middleware('abilities:user:account');
-    Route::post('user/set_address',[Users::class,'setAddress'])
+    Route::post('user/set_address',[UserData::class,'setAddress'])
         ->middleware('abilities:user:account');
-    Route::post('user/set_bvn',[Users::class,'setBVN'])
+    Route::post('user/set_bvn',[UserData::class,'setBVN'])
         ->middleware('abilities:user:account');
-    Route::post('user/set_id',[Users::class,'setIDVerification'])
+    Route::post('user/set_id',[UserData::class,'setIDVerification'])
         ->middleware('abilities:user:account');
-    Route::post('user/set_photo',[Users::class,'submitPhoto'])
+    Route::post('user/set_photo',[UserData::class,'submitPhoto'])
         ->middleware('abilities:user:account');
-    Route::post('user/set_password',[Users::class,'setPassword'])
+    Route::post('user/set_password',[UserData::class,'setPassword'])
         ->middleware('abilities:user:account');
-    Route::post('user/set_profile',[Users::class,'setProfile'])
+    Route::post('user/set_profile',[UserData::class,'setProfile'])
         ->middleware('abilities:user:account');
-    Route::post('user/set_currency',[Users::class,'setCurrency'])
+    Route::post('user/set_currency',[UserData::class,'setCurrency'])
         ->middleware('abilities:user:account');
-    Route::post('user/set_payment_method',[Users::class,'setBank'])
+    Route::post('user/set_payment_method',[UserData::class,'setBank'])
         ->middleware('abilities:user:account');
-    Route::post('user/get_payment_methods',[Users::class,'getUserBank'])
+    Route::post('user/get_payment_methods',[UserData::class,'getUserBank'])
         ->middleware('abilities:user:account');
-//    Route::post('user/get_faqs',[Users::class,''])
+//    Route::post('user/get_faqs',[UserData::class,''])
 //        ->middleware('abilities:user:account');
-    Route::get('user/get_user_wallets',[Users::class,'getUserWallets'])
-        ->middleware('abilities:user:account');
-    Route::get('user/get_user_wallets/{asset}',[Users::class,'getSpecificUserWallets'])
-        ->middleware('abilities:user:account');
-    Route::post('user/get_user_deposits/{page?}',[Users::class,'getDeposits'])
-        ->middleware('abilities:user:account');
-    Route::post('user/get_user_deposits_asset/{asset}/{page?}',[Users::class,'getDepositByAsset'])
-        ->middleware('abilities:user:account');
-    Route::post('user/get_crypto_balance/{asset}',[Countries::class,'getUserCryptoBalance'])
-        ->middleware('abilities:user:account');
-    Route::post('user/get_fiat_balance/{fiat}',[Countries::class,'getUserFiatBalance'])
-        ->middleware('abilities:user:account');
-    //buy
-    Route::post('user/buy',[Users::class,'buyCrypto'])
-        ->middleware('abilities:user:account');
-    //sell
-    Route::post('user/sell',[Users::class,'sellCrypto'])
-        ->middleware('abilities:user:account');
-    //get sales
-    Route::post('user/get_user_sales/{asset}/{page?}',[Users::class,'getUserSalesByAsset'])
-        ->middleware('abilities:user:account');
-    Route::post('user/get_user_sales/{page?}',[Users::class,'getUserSales'])
-        ->middleware('abilities:user:account');
-    //get purchases
-    Route::post('user/get_user_purchases/{asset}/{page?}',[Users::class,'getUserPurchasesAsset'])
-        ->middleware('abilities:user:account');
-    Route::post('user/get_user_purchases/{page?}',[Users::class,'getUserPurchases'])
-        ->middleware('abilities:user:account');
-    //fetch system bank account
-    Route::get('get_system_bank_account',[Users::class,'getSystemFiatAccount'])
-        ->middleware('abilities:user:account');
-    //initiate deposit
-    Route::post('user/initiate_deposit',[Users::class,'fundFiat'])
-        ->middleware('abilities:user:account');
-    //confirm deposit
-    Route::post('user/confirm_fiat_deposit',[Users::class,'confirmFiatFunding'])
-        ->middleware('abilities:user:account');
-    //get deposits
-    Route::get('user/get_user_fiat_deposits',[Users::class,'getUserFiatDeposits'])
-        ->middleware('abilities:user:account');
-    //initiate fiat withdrawal
-    Route::post('user/initiate_withdrawal',[Users::class,'withdrawFiatFunds'])
-        ->middleware('abilities:user:account');
-    Route::get('user/get_user_fiat_withdrawals',[Users::class,'getUserFiatWithdrawals'])
-        ->middleware('abilities:user:account');
-    //initiate swap
-    Route::post('user/initiate_swap',[Users::class,'processSwap'])
-        ->middleware('abilities:user:account');
-    Route::get('user/get_swaps',[Users::class,'getUserSwapList'])
-        ->middleware('abilities:user:account');
-    //enroll on signal
-    Route::post('user/enroll_signal',[Users::class,'enrollInSignalPackage'])
-        ->middleware('abilities:user:account');
-    Route::get('user/get_signal_room',[Users::class,'getUserSignal'])
-        ->middleware('abilities:user:account');
-    Route::post('user/enroll_signal/crypto',[Users::class,'paySignalUsingCrypto'])
-        ->middleware('abilities:user:account');
-    //send coin out to other users
-    Route::get('user/get_recipient_details_phone/{phone}',[Users::class,'getWithdrawalRecipientDetailByPhone'])
-        ->middleware('abilities:user:account');
-    Route::get('user/get_recipient_details_email/{email}',[Users::class,'getWithdrawalRecipientDetailByEmail'])
-        ->middleware('abilities:user:account');
-    Route::post('user/send_crypto_to_user',[Users::class,'sendCryptoUser'])
-        ->middleware('abilities:user:account');
-    Route::post('user/withdraw_crypto',[Users::class,'sendCryptoToExternal'])
-        ->middleware('abilities:user:account');
-    //get user details
-    Route::post('user/user_details',[Users::class,'getLoggedInUserDetails']);
 
-    Route::get('user/fiat_transactions',[Users::class,'fetchUserFiatTransactions']);
-    Route::get('user/crypto_transactions/{asset}',[Users::class,'fetchUserCryptoTransactions']);
-    //Transaction Otps
-    Route::post('user/otp/{purpose}',[Users::class,'sendRequestForOtp'])
+    // Routes for WalletData
+    Route::get('user/get_user_wallets',[WalletData::class,'getUserWallets'])
+        ->middleware('abilities:user:account');
+    Route::get('user/get_user_wallets/{asset}',[WalletData::class,'getSpecificUserWallets'])
+        ->middleware('abilities:user:account');
+    //Routes for Balance Module
+    Route::post('user/get_crypto_balance/{asset}',[BalanceData::class,'getUserCryptoBalance'])
+        ->middleware('abilities:user:account');
+    Route::post('user/get_fiat_balance/{fiat}',[BalanceData::class,'getUserFiatBalance'])
+        ->middleware('abilities:user:account');
+
+    //Route for Deposit Module
+    Route::post('user/get_user_deposits/{page?}',[UserData::class,'getDeposits'])
+        ->middleware('abilities:user:account');
+    Route::post('user/get_user_deposits_asset/{asset}/{page?}',[UserData::class,'getDepositByAsset'])
+        ->middleware('abilities:user:account');
+    //Buy Module
+    Route::post('user/buy',[BuyData::class,'buyCrypto'])
+        ->middleware('abilities:user:account');
+    Route::post('user/get_user_purchases/{asset}/{page?}',[BuyData::class,'getUserPurchasesAsset'])
+        ->middleware('abilities:user:account');
+    Route::post('user/get_user_purchases/{page?}',[BuyData::class,'getUserPurchases'])
+        ->middleware('abilities:user:account');
+    //sell Module
+    Route::post('user/sell',[SellData::class,'sellCrypto'])
+        ->middleware('abilities:user:account');
+    Route::post('user/get_user_sales/{asset}/{page?}',[SellData::class,'getUserSalesByAsset'])
+        ->middleware('abilities:user:account');
+    Route::post('user/get_user_sales/{page?}',[SellData::class,'getUserSales'])
+        ->middleware('abilities:user:account');
+
+    //Fiat Deposit module
+    Route::get('get_system_bank_account',[FiatDepositData::class,'getSystemFiatAccount'])
+        ->middleware('abilities:user:account');
+    Route::post('user/initiate_deposit',[FiatDepositData::class,'fundFiat'])
+        ->middleware('abilities:user:account');
+    Route::post('user/confirm_fiat_deposit',[FiatDepositData::class,'confirmFiatFunding'])
+        ->middleware('abilities:user:account');
+    Route::get('user/get_user_fiat_deposits',[UserData::class,'getUserFiatDeposits'])
+        ->middleware('abilities:user:account');
+
+    //Fiat Withdrawal Module
+    Route::post('user/initiate_withdrawal',[FiatWithdrawalData::class,'withdrawFiatFunds'])
+        ->middleware('abilities:user:account');
+    Route::get('user/get_user_fiat_withdrawals',[FiatWithdrawalData::class,'getUserFiatWithdrawals'])
+        ->middleware('abilities:user:account');
+
+    //Swap Module
+    Route::post('user/initiate_swap',[SwapData::class,'processSwap'])
+        ->middleware('abilities:user:account');
+    Route::get('user/get_swaps',[SwapData::class,'getUserSwapList'])
+        ->middleware('abilities:user:account');
+
+    //Signal Module Route
+    Route::post('user/enroll_signal',[SignalData::class,'enrollInSignalPackage'])
+        ->middleware('abilities:user:account');
+    Route::get('user/get_signal_room',[SignalData::class,'getUserSignal'])
+        ->middleware('abilities:user:account');
+    Route::post('user/enroll_signal/crypto',[SignalData::class,'paySignalUsingCrypto'])
+        ->middleware('abilities:user:account');
+
+    //Crypto withdrawal Module
+    Route::get('user/get_recipient_details_phone/{phone}',[WithdrawalData::class,'getWithdrawalRecipientDetailByPhone'])
+        ->middleware('abilities:user:account');
+    Route::get('user/get_recipient_details_email/{email}',[WithdrawalData::class,'getWithdrawalRecipientDetailByEmail'])
+        ->middleware('abilities:user:account');
+    Route::post('user/send_crypto_to_user',[WithdrawalData::class,'sendCryptoUser'])
+        ->middleware('abilities:user:account');
+    Route::post('user/withdraw_crypto',[WithdrawalData::class,'sendCryptoToExternal'])
+        ->middleware('abilities:user:account');
+
+    //Transaction data Module
+    Route::get('user/fiat_transactions',[TransactionData::class,'fetchUserFiatTransactions']);
+    Route::get('user/crypto_transactions/{asset}',[TransactionData::class,'fetchUserCryptoTransactions']);
+    Route::post('user/otp/{purpose}',[TransactionData::class,'sendRequestForOtp'])
         ->middleware('abilities:user:account');
 });
-Route::get('countries',[Countries::class,'fetchCountries']);
-Route::get('get_currencies',[Countries::class,'getCurrencies']);
-Route::get('get_help',[Countries::class,'getContact']);
-Route::get('get_faq',[Countries::class,'getFaq']);
-Route::get('get_tokens/{fiat?}',[Countries::class,'getSupportedTokens']);
-Route::get('get_network_fee/{asset}',[Countries::class,'getSendingFee']);
-Route::get('get_recipient_detail/{email}',[Countries::class,'getRecipientDetails']);
-Route::get('get_recipient_detail_phone/{phone}',[Countries::class,'getRecipientDetailsPhone']);
-Route::get('get_exchange_rate/{asset}/{fiat?}',[Countries::class,'getRateCryptoNow']);
+Route::get('countries',[Utilities::class,'fetchCountries']);
+Route::get('get_currencies',[Utilities::class,'getCurrencies']);
+Route::get('get_help',[Utilities::class,'getContact']);
+Route::get('get_faq',[Utilities::class,'getFaq']);
+Route::get('get_tokens/{fiat?}',[Utilities::class,'getSupportedTokens']);
+Route::get('get_network_fee/{asset}',[Utilities::class,'getSendingFee']);
+Route::get('get_recipient_detail/{email}',[Utilities::class,'getRecipientDetails']);
+Route::get('get_recipient_detail_phone/{phone}',[Utilities::class,'getRecipientDetailsPhone']);
+Route::get('get_exchange_rate/{asset}/{fiat?}',[Utilities::class,'getRateCryptoNow']);
 Route::get('get_crypto_exchange_rate/{asset}/{assetTo}/{amount?}',
-    [Countries::class,'getCryptoToCryptoRate']);
-Route::get('get_signal_packages',[Countries::class,'fetchSignalPackages']);
-Route::post('get_coin_rate',[Countries::class,'getUsdToCryptoRate']);
-Route::post('get_coin_rate_ngn',[Countries::class,'getNGNToCrypto']);
-Route::post('get_crypto_to_usd_rate',[Countries::class,'convertFromCryptoToUsd']);
-Route::post('get_crypto_to_ngn_rate',[Countries::class,'convertFromCryptoToNgn']);
+    [Utilities::class,'getCryptoToCryptoRate']);
+Route::get('get_signal_packages',[Utilities::class,'fetchSignalPackages']);
+Route::post('get_coin_rate',[Utilities::class,'getUsdToCryptoRate']);
+Route::post('get_coin_rate_ngn',[Utilities::class,'getNGNToCrypto']);
+Route::post('get_crypto_to_usd_rate',[Utilities::class,'convertFromCryptoToUsd']);
+Route::post('get_crypto_to_ngn_rate',[Utilities::class,'convertFromCryptoToNgn']);
 
-Route::post('get_usd_to_ngn/{amount?}',[Countries::class,'convertUsdToNgn']);
+Route::post('get_usd_to_ngn/{amount?}',[Utilities::class,'convertUsdToNgn']);
 
-Route::get('testing',[Users::class,'testEndpointsNew']);
+Route::get('testing',[UserData::class,'testEndpointsNew']);

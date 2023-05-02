@@ -4,11 +4,14 @@ namespace App\Traits;
 
 use App\Models\Coin;
 use App\Models\Fiat;
+use App\Models\GeneralSetting;
+use App\Models\Otp;
 use App\Models\SystemAccount;
 use App\Models\User;
 use App\Regular\Wallet;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -72,6 +75,7 @@ trait PubFunctions
     }
     public function getCryptoRateInstant($coin,$fiat='USD')
     {
+        $settings = GeneralSetting::find(1);
         //set the coin as the cache
         $key = strtoupper($coin);
         $values= $this->regular->getCryptoExchange(strtoupper($key));
@@ -85,7 +89,7 @@ trait PubFunctions
             }else{
                 if ($curr =='NGN'){
                     $rate = $this->regular->fetchUsdNGNRate();
-                    $rateUsd = $rate['price'];
+                    $rateUsd = $rate['price']-$settings->rateDiff;
                     $rate = $rateUsd*$values;
                     $value = $rate;
                 }else{
@@ -221,4 +225,36 @@ trait PubFunctions
         }
     }
 
+    //verify otp
+    public function verifyOtpSent($user,$code,$purpose)
+    {
+        //check otp
+        $otp = Otp::where(['user'=>$user->id,'purpose'=>$purpose])->first();
+        if (empty($otp)){
+            $error = "Something is wrong with your request. Try again";
+            $stat = false;
+        }elseif ($otp->codeExpires < time()){
+            //check if the otp has expired
+            $error = "Your OTP has timed out.";
+            $stat = false;
+        }else{
+            $hashedOtp = Hash::check($code, $otp->token);
+            if (!$hashedOtp) {
+
+                //check if the otp is correct
+                $error = "Invalid OTP token.";
+                $stat = false;
+            } else {
+                Otp::where('user', $user->id)->delete();
+
+                $error = "Successful";
+                $stat = true;
+            }
+        }
+
+        return [
+            'status'=>$stat,
+            'error'=>$error
+        ];
+    }
 }

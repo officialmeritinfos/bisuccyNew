@@ -4,6 +4,11 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Console\Commands\CacheRates;
+use App\Console\Commands\NotifyUserAboutSignalRenewal;
+use App\Console\Commands\CheckUserSubscription;
+use App\Console\Commands\SendSignalNotifications;
+use App\Console\Commands\SendMessageNotifications;
 
 class Kernel extends ConsoleKernel
 {
@@ -15,7 +20,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('cache:cryptoRates')->everyFifteenMinutes();
+        $schedule->command('create:systemAccount')->everyFiveMinutes();
+        $schedule->command('notify:userAboutRenewal')->everyFiveMinutes();
+        $schedule->command('check:userSubscription')->everyFiveMinutes();
+        $schedule->command('send:signalNotification')->everyMinute();
+        $schedule->command('send:messageNotification')->everyFiveMinutes();
     }
 
     /**
