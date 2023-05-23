@@ -8,6 +8,7 @@ use App\Models\Coin;
 use App\Models\Deposit;
 use App\Models\GeneralSetting;
 use App\Models\User;
+use App\Models\UserWallet;
 use App\Models\Wallet;
 use App\Models\Withdrawal;
 use App\Notifications\AdminMail;
@@ -97,15 +98,15 @@ class WithdrawalData extends BaseController
             active'],422);
         }
         //check of the wallet exists
-        $wallet = Wallet::where(['user'=>$user->id,'asset'=>strtoupper($input['asset'])])->first();
+        $wallet = UserWallet::where(['user'=>$user->id,'asset'=>strtoupper($input['asset'])])->first();
         if (empty($wallet)){
             return $this->sendError('validation.error',['error'=>'Unsupported asset'],422);
         }
         //get recipient's wallet
-        $walletTo = Wallet::where(['user'=>$recipient->id,'asset'=>$input['asset']])->first();
+        $walletTo = UserWallet::where(['user'=>$recipient->id,'asset'=>$input['asset']])->first();
 
         //check if the wallet has enough balance
-        if ($input['amount'] > $wallet->availableBalance) {
+        if ($input['amount'] > $wallet->floatBalance) {
             return $this->sendError('balance.error', ['error' =>
                 'Insufficient Balance for transfer of '.$input['amount']." ".$input['asset']
             ],
@@ -125,7 +126,7 @@ class WithdrawalData extends BaseController
     {
         $coin = Coin::where('asset',$input['asset'])->first();
         $balanceDetail=[
-            'availableBalance'=>$walletFrom->availableBalance - ($input['amount'])
+            'floatBalance'=>$walletFrom->floatBalance - ($input['amount'])
         ];
 
         $ref = $this->generateRef('withdrawals','reference');
@@ -147,16 +148,16 @@ class WithdrawalData extends BaseController
         ];
 
         $dataReceiverWallet=[
-            'availableBalance'=>$walletTo->availableBalance+$input['amount']
+            'floatBalance'=>$walletTo->floatBalance+$input['amount']
         ];
 
         $withdrawal = Withdrawal::create($dataWithdrawal);
         if (!empty($withdrawal)){
             Deposit::create($dataDeposit);
 
-            Wallet::where(['user'=>$sender->id,'id'=>$walletFrom->id])->update($balanceDetail);
+            UserWallet::where(['user'=>$sender->id,'id'=>$walletFrom->id])->update($balanceDetail);
 
-            Wallet::where('id',$walletTo->id)->update($dataReceiverWallet);
+            UserWallet::where('id',$walletTo->id)->update($dataReceiverWallet);
 
             $message= sprintf("
                 <b>Transfer Reference</b> %s<br><br>
@@ -238,12 +239,12 @@ class WithdrawalData extends BaseController
         $coin = Coin::where('asset',$input['asset'])->first();
 
         //check of the wallet exists
-        $wallet = Wallet::where(['user'=>$user->id,'asset'=>strtoupper($input['asset'])])->first();
+        $wallet = UserWallet::where(['user'=>$user->id,'asset'=>strtoupper($input['asset'])])->first();
         if (empty($wallet)){
             return $this->sendError('validation.error',['error'=>'Unsupported asset'],422);
         }
         //check if the wallet has enough balance
-        if (($input['amount']+$coin->networkFee)>$wallet->availableBalance) {
+        if (($input['amount']+$coin->networkFee)>$wallet->floatBalance) {
             return $this->sendError('balance.error',
                 ['error' => 'Insufficient Balance for transfer of '.$input['amount']],
                 422
@@ -264,7 +265,7 @@ class WithdrawalData extends BaseController
     {
         $coin = Coin::where('asset',$input['asset'])->first();
         $balanceDetail=[
-            'availableBalance'=>$walletFrom->availableBalance - ($input['amount']+$coin->networkFee)
+            'floatBalance'=>$walletFrom->floatBalance - ($input['amount']+$coin->networkFee)
         ];
         $hasMemo = (empty($input['memo']))?2:1;
         $ref = $this->generateRef('withdrawals','reference');
@@ -274,14 +275,14 @@ class WithdrawalData extends BaseController
             'fee'=>$coin->networkFee,'withdrawalType'=>2,'destination'=>'external',
             'addressTo'=>$input['address'],'reference'=>$ref,
             'memo'=>$input['memo'],'hasMemo'=>$hasMemo,'isSystem'=>2,'status'=>2,
-            'balance'=>$walletFrom->availableBalance-($input['amount']+$coin->networkFee),
+            'balance'=>$walletFrom->floatBalance-($input['amount']+$coin->networkFee),
         ];
 
         $withdrawal = Withdrawal::create($dataWithdrawal);
         if (!empty($withdrawal)){
             //Deposit::create($dataDeposit);
 
-            Wallet::where(['user'=>$sender->id,'id'=>$walletFrom->id])->update($balanceDetail);
+            UserWallet::where(['user'=>$sender->id,'id'=>$walletFrom->id])->update($balanceDetail);
 
             //Wallet::where('id',$walletTo->id)->update($dataReceiverWallet);
 

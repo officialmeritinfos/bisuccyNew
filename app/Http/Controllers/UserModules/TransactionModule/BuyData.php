@@ -9,6 +9,7 @@ use App\Models\Fiat;
 use App\Models\GeneralSetting;
 use App\Models\Purchase;
 use App\Models\User;
+use App\Models\UserWallet;
 use App\Models\Wallet;
 use App\Notifications\AdminMail;
 use App\Traits\PubFunctions;
@@ -79,7 +80,7 @@ class BuyData extends BaseController
             please fund your account.'],421);
         }
         $coin = Coin::where('asset',$input['asset'])->first();
-        $wallet = Wallet::where(['user'=>$user->id,'asset'=>$input['asset']])->first();
+        $wallet = UserWallet::where(['user'=>$user->id,'asset'=>$input['asset']])->first();
 
 
         $charge = ($web->buyCharge/100)*$cryptoAmount;
@@ -91,7 +92,7 @@ class BuyData extends BaseController
         ];
 
         $dataWallet = [
-            'availableBalance'=>$wallet->availableBalance + $amountCredit
+            'floatBalance'=>$wallet->floatBalance + $amountCredit
         ];
 
         $ref = $this->generateRef('purchases','reference');
@@ -104,7 +105,7 @@ class BuyData extends BaseController
 
         $buy = Purchase::create($dataPurchase);
         if (!empty($buy)){
-            Wallet::where(['user'=>$user->id,'id'=>$wallet->id])->update($dataWallet);
+            UserWallet::where(['user'=>$user->id,'id'=>$wallet->id])->update($dataWallet);
             User::where('id',$user->id)->update($dataUser);
 
             $admin = User::where('isAdmin',1)->first();

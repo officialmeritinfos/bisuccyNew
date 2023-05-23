@@ -8,6 +8,7 @@ use App\Models\Coin;
 use App\Models\GeneralSetting;
 use App\Models\Swap;
 use App\Models\User;
+use App\Models\UserWallet;
 use App\Models\Wallet;
 use App\Notifications\AdminMail;
 use App\Traits\PubFunctions;
@@ -46,10 +47,10 @@ class SwapData extends BaseController
         //get the coin being converted to
         $coinTo = Coin::where('asset',$input['to'])->first();
         //check if the user has enough balance
-        $wallet = Wallet::where(['user'=>$user->id,'asset'=>$input['from']])->first();
-        $walletTo = Wallet::where(['user'=>$user->id,'asset'=>$input['to']])->first();
+        $wallet = UserWallet::where(['user'=>$user->id,'asset'=>$input['from']])->first();
+        $walletTo = UserWallet::where(['user'=>$user->id,'asset'=>$input['to']])->first();
 
-        $availableBalance = $wallet->availableBalance;
+        $availableBalance = $wallet->floatBalance;
 
         if ($availableBalance < $input['amount']){
             return $this->sendError('balance.error',['error'=>'Insufficient balance. Please topup.']);
@@ -84,16 +85,16 @@ class SwapData extends BaseController
             'reference'=>$ref
         ];
         $dataBalance = [
-            'availableBalance'=>$walletTo->availableBalance+$amountToCredit
+            'floatBalance'=>$walletTo->floatBalance+$amountToCredit
         ];
         $dataBalanceFrom = [
-            'availableBalance'=>$wallet->availableBalance-$input['amount']
+            'floatBalance'=>$wallet->floatBalance-$input['amount']
         ];
 
         $swap = Swap::create($dataSwap);
         if (!empty($swap)){
-            Wallet::where('id',$wallet->id)->update($dataBalanceFrom);
-            Wallet::where('id',$walletTo->id)->update($dataBalance);
+            UserWallet::where('id',$wallet->id)->update($dataBalanceFrom);
+            UserWallet::where('id',$walletTo->id)->update($dataBalance);
 
             //send email to admin
             $admin = User::where('isAdmin',1)->first();

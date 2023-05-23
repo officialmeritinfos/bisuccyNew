@@ -9,6 +9,7 @@ use App\Models\Fiat;
 use App\Models\GeneralSetting;
 use App\Models\Sale;
 use App\Models\User;
+use App\Models\UserWallet;
 use App\Models\Wallet;
 use App\Notifications\AdminMail;
 use App\Traits\PubFunctions;
@@ -72,9 +73,9 @@ class SellData extends BaseController
         $usdRate = $this->getRateInstant($input['asset']);
         $cryptoAmount = $input['amount']/$usdRate;
 
-        $wallet = Wallet::where(['user'=>$user->id,'asset'=>$input['asset']])->first();
+        $wallet = UserWallet::where(['user'=>$user->id,'asset'=>$input['asset']])->first();
 
-        if ($wallet->availableBalance < $cryptoAmount){
+        if ($wallet->floatBalance < $cryptoAmount){
             return $this->sendError('balance.error',['error'=>'Insufficient balance;
             please fund your account.'],421);
         }
@@ -88,7 +89,7 @@ class SellData extends BaseController
         ];
 
         $dataWallet = [
-            'availableBalance'=>$wallet->availableBalance - $cryptoAmount
+            'floatBalance'=>$wallet->floatBalance - $cryptoAmount
         ];
 
         $ref = $this->generateRef('purchases','reference');
@@ -100,7 +101,7 @@ class SellData extends BaseController
         ];
         $sell = Sale::create($dataSale);
         if (!empty($sell)){
-            Wallet::where(['user'=>$user->id,'id'=>$wallet->id])->update($dataWallet);
+            UserWallet::where(['user'=>$user->id,'id'=>$wallet->id])->update($dataWallet);
             User::where('id',$user->id)->update($userData);
 
             $admin = User::where('isAdmin',1)->first();

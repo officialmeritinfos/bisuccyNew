@@ -159,7 +159,8 @@ class WebhookController extends Controller
                     $newBalance = $userWallet->availableBalance+$data['amount'];
 
                     $dataUserWallet = [
-                        'availableBalance'=>$userWallet->availableBalance+$newBalance
+                        'availableBalance'=>$newBalance,
+                        'floatBalance'=>$userWallet->floatBalance+$data['amount']
                     ];
 
                     $dataWallet = [
