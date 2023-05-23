@@ -8,6 +8,7 @@ use App\Http\Controllers\Mobile\Auth\VerifyEmail;
 use App\Http\Controllers\UserModules\BalanceData;
 use App\Http\Controllers\UserModules\SignalData;
 use App\Http\Controllers\UserModules\TransactionModule\BuyData;
+use App\Http\Controllers\UserModules\TransactionModule\DepositData;
 use App\Http\Controllers\UserModules\TransactionModule\FiatDepositData;
 use App\Http\Controllers\UserModules\TransactionModule\FiatWithdrawalData;
 use App\Http\Controllers\UserModules\TransactionModule\SellData;
@@ -98,9 +99,9 @@ Route::middleware('auth:sanctum')->group(function (){
         ->middleware('abilities:user:account');
 
     //Route for Deposit Module
-    Route::post('user/get_user_deposits/{page?}',[UserData::class,'getDeposits'])
+    Route::post('user/get_user_deposits/{page?}',[DepositData::class,'getDeposits'])
         ->middleware('abilities:user:account');
-    Route::post('user/get_user_deposits_asset/{asset}/{page?}',[UserData::class,'getDepositByAsset'])
+    Route::post('user/get_user_deposits_asset/{asset}/{page?}',[DepositData::class,'getDepositByAsset'])
         ->middleware('abilities:user:account');
     //Buy Module
     Route::post('user/buy',[BuyData::class,'buyCrypto'])

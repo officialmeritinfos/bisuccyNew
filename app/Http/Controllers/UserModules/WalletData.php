@@ -17,13 +17,6 @@ use Illuminate\Support\Facades\Auth;
 class WalletData extends BaseController
 {
     use PubFunctions;
-//    public function getUserWallets()
-//    {
-//        $user = Auth::user();
-//
-//        $wallets = Wallet::where(['user'=>$user->id,'status'=>1])->get();
-//        return $this->getWalletBasedOnNetwork($wallets, $user);
-//    }
     public function getUserWallets()
     {
         $user = Auth::user();
@@ -50,10 +43,11 @@ class WalletData extends BaseController
             $data = [
                 'currency'=>$userWallet->asset,
                 'addresses'=>$dataNetCo,
-                'fiatEquivalent' => $userWallet->availableBalance * $rate,
+                'fiatEquivalent' => $userWallet->floatBalance * $rate,
                 'name' => $coin->name,
                 'icon' => asset('cryptocoins/' . strtolower($coin->icon) . '.svg'),
                 'usdRate' => "$rate",
+                'balance'=>$userWallet->floatBalance
             ];
             $dataCo[]=$data;
         }
@@ -85,10 +79,11 @@ class WalletData extends BaseController
         $data = [
             'currency'=>$userWallet->asset,
             'addresses'=>$dataNetCo,
-            'fiatEquivalent' => $userWallet->availableBalance * $rate,
+            'fiatEquivalent' => $userWallet->floatBalance * $rate,
             'name' => $coin->name,
             'icon' => asset('cryptocoins/' . strtolower($coin->icon) . '.svg'),
             'usdRate' => "$rate",
+            'balance'=>$userWallet->floatBalance
         ];
         $dataCo[]=$data;
         return $this->sendResponse($dataCo, 'retrieved');
