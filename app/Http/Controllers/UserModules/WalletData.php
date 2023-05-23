@@ -5,6 +5,7 @@ namespace App\Http\Controllers\UserModules;
 use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
 use App\Models\Coin;
+use App\Models\CoinNetwork;
 use App\Models\GeneralSetting;
 use App\Models\User;
 use App\Models\Wallet;
@@ -20,27 +21,22 @@ class WalletData extends BaseController
         $user = Auth::user();
 
         $wallets = Wallet::where(['user'=>$user->id,'status'=>1])->get();
-        if ($wallets->count()<1){
-            return $this->sendError('wallet.error',['error'=>'Nothing found.']);
-        }
-        $dataCo = [];
-        foreach ($wallets as $wallet) {
-            $data = $this->getWalletData($wallet, $user);
-            $dataCo[]=$data;
-        }
-        return $this->sendResponse($dataCo, 'retrieved');
+        return $this->getWalletBasedOnNetwork($wallets, $user);
     }
     public function getSpecificUserWallets($asset)
     {
         $user = Auth::user();
 
-        $wallet = Wallet::where(['user'=>$user->id,'asset'=>strtoupper($asset)])->first();
-        if (empty($wallet)){
-            return $this->sendError('wallet.error',['error'=>'Nothing found.']);
-        }
+//        $wallet = Wallet::where(['user'=>$user->id,'asset'=>strtoupper($asset)])->first();
+//        if (empty($wallet)){
+//            return $this->sendError('wallet.error',['error'=>'Nothing found.']);
+//        }
+//
+//        $data = $this->getWalletData($wallet, $user);
+//        return $this->sendResponse($data, 'retrieved');
 
-        $data = $this->getWalletData($wallet, $user);
-        return $this->sendResponse($data, 'retrieved');
+        $wallets = Wallet::where(['user'=>$user->id,'asset'=>strtoupper($asset)])->get();
+        return $this->getWalletBasedOnNetwork($wallets, $user);
     }
 
     /**
@@ -53,13 +49,40 @@ class WalletData extends BaseController
         $rate = $this->getCryptoRate($wallet->asset, $user->mainCurrency);
         $coin = Coin::where('asset', $wallet->asset)->first();
         $data = [
-            'asset' => $wallet->asset, 'address' => $wallet->address, 'balance' => $wallet->availableBalance,
+            'asset' => $wallet->asset,
+            'address' => $wallet->address, 'balance' => $wallet->availableBalance,
             'memo' => ($wallet->hasMemo == 1) ? $wallet->memo : 'not applicable',
             'fiatEquivalent' => $wallet->availableBalance * $rate,
             'name' => $coin->name,
             'icon' => asset('cryptocoins/' . strtolower($coin->icon) . '.svg'),
-            'usdRate' => "$rate"
+            'usdRate' => "$rate",
+            'network'=>$wallet->network
         ];
         return $data;
+    }
+
+    /**
+     * @param $wallets
+     * @param \Illuminate\Contracts\Auth\Authenticatable|null $user
+     * @return \Illuminate\Http\JsonResponse
+     */
+    private function getWalletBasedOnNetwork($wallets, ?\Illuminate\Contracts\Auth\Authenticatable $user): \Illuminate\Http\JsonResponse
+    {
+        if ($wallets->count() < 1) {
+            return $this->sendError('wallet.error', ['error' => 'Nothing found.']);
+        }
+        $dataCo = [];
+        foreach ($wallets as $wallet) {
+            $data = $this->getWalletData($wallet, $user);
+            $dataCo[] = $data;
+        }
+
+        $collection = collect($dataCo);
+
+        $grouped = $collection->groupBy('asset');
+
+        $data = $grouped->all();
+
+        return $this->sendResponse($data, 'retrieved');
     }
 }

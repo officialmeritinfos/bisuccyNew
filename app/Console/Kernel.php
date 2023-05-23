@@ -9,6 +9,9 @@ use App\Console\Commands\NotifyUserAboutSignalRenewal;
 use App\Console\Commands\CheckUserSubscription;
 use App\Console\Commands\SendSignalNotifications;
 use App\Console\Commands\SendMessageNotifications;
+use App\Console\Commands\CreateIntegratorAccount;
+use App\Console\Commands\CreateUserWallet;
+use App\Console\Commands\InitializeUserWallet;
 
 class Kernel extends ConsoleKernel
 {
@@ -20,12 +23,16 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('cache:cryptoRates')->everyFifteenMinutes();
-        $schedule->command('create:systemAccount')->everyFiveMinutes();
-        $schedule->command('notify:userAboutRenewal')->everyFiveMinutes();
-        $schedule->command('check:userSubscription')->everyFiveMinutes();
-        $schedule->command('send:signalNotification')->everyMinute();
-        $schedule->command('send:messageNotification')->everyFiveMinutes();
+//        $schedule->command('cache:cryptoRates')->everyFifteenMinutes();
+//        $schedule->command('create:systemAccount')->everyFiveMinutes();
+//        $schedule->command('notify:userAboutRenewal')->everyFiveMinutes();
+//        $schedule->command('check:userSubscription')->everyFiveMinutes();
+//        $schedule->command('send:signalNotification')->everyMinute();
+//        $schedule->command('send:messageNotification')->everyFiveMinutes();
+
+        $schedule->command('create:integrator')->everyMinute();
+        $schedule->command('initialize:userWallet')->everyMinute();
+        $schedule->command('create:userWallet')->everyMinute();
     }
 
     /**

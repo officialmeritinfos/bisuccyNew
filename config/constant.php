@@ -24,5 +24,12 @@ return [
         'apiKey'=>'TLfK9042finW1GboCFPRlwLfd2rAIKLNIkJ1J8RAVYx8LcvBW99grBY8w4YIbV',
         'secKey'=>'tsk_my0m6345554720d8394876zeel',
         'isLive'=>'1'
+    ],
+    'oneLiquidity'=>[
+        'id'=>'52876a70-bd7e-4f6f-b84f-90eb219cd370',
+        'token'=>'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbnRlZ3JhdG9yUGsiOiI1Mjg3NmE3MC1iZDdlLTRmNmYtYjg0Zi05MGViMjE5Y2QzNzAiLCJzZXNzaW9uSWQiOiIwZjA5NDFlYy1jMjI0LTQ0ODMtYjNiYS1mODQ0NDU1ZGI4NjUiLCJhZG1pbiI6ZmFsc2UsInN0YWdlIjoic3RhZ2luZyIsInByb2dyYW1tYXRpYyI6dHJ1ZSwiaWF0IjoxNjg0Nzc0MTI0fQ.u9dyKw498-XtYn3oCDEEOYMQ3AYwW_UHTa_dqyivzMA',
+        'isLive'=>2,
+        'liveUrl'=>'https://api.oneliquidity.technology/',
+        'testUrl'=>'https://sandbox-api.oneliquidity.technology/'
     ]
 ];
