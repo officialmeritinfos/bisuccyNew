@@ -39,17 +39,23 @@ class FiatWithdrawalData extends BaseController
                 422);
         }
 
-        $currency = Fiat::where('code',$input['currency'])->first();
-        $rateNGN = $currency->rateNGN;
+//        $currency = Fiat::where('code',$input['currency'])->first();
+//        $rateNGN = $currency->rateNGN;
+
+        $rateNGN = $this->fetchUsdToNgnRate();
+
+
 
         $ngnAmount = $rateNGN*$input['amount'];
 
-        if ($user->balance <$ngnAmount){
+        $amount = $input['amount'];
+
+        if ($user->balance <$input['amount']){
             return $this->sendError('validation.error', ['error' => 'Insufficient funds'], 422);
         }
 
         $dataUser = [
-            'balance'=>$user->balance-$ngnAmount
+            'balance'=>$user->balance-$amount
         ];
         $charge=$web->withdrawalCharge;
         $amountCredit = $ngnAmount-$charge;
@@ -60,7 +66,7 @@ class FiatWithdrawalData extends BaseController
             'charge'=>$charge,
             'amountCredit'=>$amountCredit,'bank'=>$paymentMethod->bank,
             'accountName'=>$paymentMethod->accountName,'accountNumber'=>$paymentMethod->accountNumber,
-            'status'=>2
+            'status'=>2,'rate'=>$rateNGN
         ];
 
         $withdrawal = FiatWithdrawal::create($dataWithdrawal);
@@ -76,6 +82,7 @@ class FiatWithdrawalData extends BaseController
                     <b>Amount Requested</b>: NGN".number_format($ngnAmount)."<br>
                     <b>Amount To Credit</b>: NGN".number_format($amountCredit)."<br>
                     <b>Amount To Credit</b>: USD".number_format($input['amount'])."<br>
+                    <b>Rate</b>: ".number_format($rateNGN)."<br>
                     <b>Charge</b>: NGN".number_format($charge)."<br>
                     <b>Bank </b>:".$paymentMethod->bank."<br>
                     <b>Account Number</b>:".$paymentMethod->accountNumber."<br>

@@ -58,26 +58,27 @@ class SellData extends BaseController
 
         $coin = Coin::where('asset',$input['asset'])->first();
         //by default, we will assume that the sale currency is USD and convert to NGN
-        $fiat = Fiat::where('code','NGN')->first();
+//        $fiat = Fiat::where('code','NGN')->first();
         $balance = $user->balance;
-        $rate = $this->regular->fetchUsdNGNRate();
-        if (!$rate->ok()){
-            return $this->sendError('rate.error',['error'=>'A conversion error just occurred. Try again']);
-        }
-
-        $rates = $rate->json();
-
-        $sellRate = $rates['price'];
+//        $rate = $this->regular->fetchUsdNGNRate();
+//        if (!$rate->ok()){
+//            return $this->sendError('rate.error',['error'=>'A conversion error just occurred. Try again']);
+//        }
+//
+//        $rates = $rate->json();
+//
+//        $sellRate = $rates['price'];
         //compute the system rate and amount
-        $fiatAmount = $input['amount']*$sellRate;
+        $fiatAmount = $input['amount'];
         $usdRate = $this->getRateInstant($input['asset']);
         $cryptoAmount = $input['amount']/$usdRate;
 
         $wallet = UserWallet::where(['user'=>$user->id,'asset'=>$input['asset']])->first();
 
         if ($wallet->floatBalance < $cryptoAmount){
-            return $this->sendError('balance.error',['error'=>'Insufficient balance;
-            please fund your account.'],421);
+            return $this->sendError('balance.error',[
+                'error'=>'Insufficient balance for the sale of '.$cryptoAmount.' '.$input['asset'].' ;please fund your account.'
+            ],421);
         }
 
         $charge = ($web->sellCharge/100)*$fiatAmount;
@@ -96,7 +97,7 @@ class SellData extends BaseController
 
         $dataSale = [
             'user'=>$user->id,'reference'=>$ref,'amount'=>$cryptoAmount,'fiatAmount'=>$input['amount'],
-            'asset'=>$input['asset'],'fiat'=>'USD','rate'=>$sellRate,'charge'=>$charge,'amountCredit'=>$amountCredit,
+            'asset'=>$input['asset'],'fiat'=>'USD','rate'=>$usdRate,'charge'=>$charge,'amountCredit'=>$amountCredit,
             'rateNGN'=>$fiatAmount,'status'=>1
         ];
         $sell = Sale::create($dataSale);
@@ -112,8 +113,8 @@ class SellData extends BaseController
                     <b>Transaction Reference</b>:".$ref."<br><br>
                     <b>Fiat Amount</b>: $".number_format($input['amount'])."<br><br>
                     <b>Crypto Sold</b>:".$cryptoAmount.$input['asset']."<br><br>
-                    <b>Naira Amount</b>:".$fiatAmount."NGN<br><br>
-                    <b>Sale Rate</b>:".$sellRate." NGN<br><br>
+                    <b>Naira Amount</b>:".$fiatAmount."USD<br><br>
+                    <b>Sale Rate</b>:".$usdRate." USD<br><br>
                 ";
 
                 $admin->notify(new AdminMail($admin,$message,'New '.$coin->name.' sale'));
@@ -158,7 +159,8 @@ class SellData extends BaseController
                 'amount' => $sale->amount, 'asset' => $sale->asset,
                 'name' => $coin->name, 'date' => strtotime($sale->created_at),
                 'fiatAmount' => $sale->amountCredit,
-                'reference' => $sale->reference
+                'reference' => $sale->reference,
+                'fiat'=>$sale->fiat
             ];
 
             $dataCo[] = $data;

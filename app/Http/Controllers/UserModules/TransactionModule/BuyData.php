@@ -61,17 +61,17 @@ class BuyData extends BaseController
         $fiat = Fiat::where('code','NGN')->first();
 
         $balance = $user->balance;
+//
+//        $rate = $this->regular->fetchUsdNGNRate();
+//        if (!$rate->ok()){
+//            return $this->sendError('rate.error',['error'=>'A conversion error just occurred. Try again']);
+//        }
+//
+//        $rates = $rate->json();
 
-        $rate = $this->regular->fetchUsdNGNRate();
-        if (!$rate->ok()){
-            return $this->sendError('rate.error',['error'=>'A conversion error just occurred. Try again']);
-        }
-
-        $rates = $rate->json();
-
-        $buyRate =$rates['price'];
+        //$buyRate =$rates['price'];
         //compute the system rate and amount
-        $amountNeededInBalance = $input['amount']*$buyRate;
+        $amountNeededInBalance = $input['amount'];
         $usdRate = $this->getRateInstant($input['asset']);
         $cryptoAmount = $input['amount']/$usdRate;
         //check if user has enough balance to cover for the purchase
@@ -99,14 +99,25 @@ class BuyData extends BaseController
 
         $dataPurchase = [
             'user'=>$user->id,'reference'=>$ref,'amount'=>$cryptoAmount,'fiatAmount'=>$input['amount'],
-            'asset'=>$input['asset'],'fiat'=>'USD','rate'=>$buyRate,'charge'=>$charge,'amountCredit'=>$amountCredit,
-            'rateNGN'=>$amountNeededInBalance,'status'=>1
+            'asset'=>$input['asset'],'fiat'=>'USD','rate'=>$usdRate,'charge'=>$charge,'amountCredit'=>$amountCredit,
+            'rateNGN'=>$input['amount'],'status'=>1
         ];
 
         $buy = Purchase::create($dataPurchase);
         if (!empty($buy)){
             UserWallet::where(['user'=>$user->id,'id'=>$wallet->id])->update($dataWallet);
             User::where('id',$user->id)->update($dataUser);
+            //send a mail to the user
+//            $userMessage = "
+//                    A new purchase of ".$coin->name." has been made on your <b>".env('APP_NAME')."</b> account.
+//                    Find Transaction details below:<br><br>
+//                    <b>Transaction Reference</b>:".$ref."<br><br>
+//                    <b>Fiat Amount</b>: $".number_format($input['amount'])."<br><br>
+//                    <b>Crypto Credited</b>:".$amountCredit.$input['asset']."<br><br>
+//                    <b>Buy Rate</b>:".$usdRate." USD<br><br>
+//                ";
+//
+//            $user->notify(new AdminMail($user,$userMessage,'New '.$coin->name.' purchase'));
 
             $admin = User::where('isAdmin',1)->first();
             if(!empty($admin)){
@@ -116,8 +127,7 @@ class BuyData extends BaseController
                     <b>Transaction Reference</b>:".$ref."<br><br>
                     <b>Fiat Amount</b>: $".number_format($input['amount'])."<br><br>
                     <b>Crypto Credited</b>:".$amountCredit.$input['asset']."<br><br>
-                    <b>Naira Amount</b>:".$amountNeededInBalance."NGN<br><br>
-                    <b>Buy Rate</b>:".$buyRate." NGN<br><br>
+                    <b>Buy Rate</b>:".$usdRate." USD<br><br>
                 ";
 
                 $admin->notify(new AdminMail($admin,$message,'New '.$coin->name.' purchase'));
@@ -151,7 +161,7 @@ class BuyData extends BaseController
     protected function getPurchaseData($purchases): \Illuminate\Http\JsonResponse
     {
         if ($purchases->count() < 1) {
-            return $this->sendError('sales.error', ['error' => 'Nothing found']);
+            return $this->sendError('purchase.error', ['error' => 'Nothing found']);
         }
         $dataCo = [];
         foreach ($purchases as $purchase) {
@@ -159,9 +169,10 @@ class BuyData extends BaseController
             $data = [
                 'amount' => $purchase->amount, 'asset' => $purchase->asset,
                 'name' => $coin->name, 'date' => strtotime($purchase->created_at),
-                'fiatAmount' => $purchase->rateNGN,
+                'fiatAmount' => $purchase->fiatAmount,
                 'reference' => $purchase->reference,
-                'rate'=>$purchase->rate,'fiat'=>$purchase->fiat
+                'rate'=>$purchase->rate,'fiat'=>$purchase->fiat,
+                'amountReceived'=>$purchase->amountCredit
             ];
 
             $dataCo[] = $data;

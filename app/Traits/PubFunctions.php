@@ -257,4 +257,28 @@ trait PubFunctions
             'error'=>$error
         ];
     }
+    //from usd to ngn
+    public function fetchUsdToNgnRate()
+    {
+        $settings = GeneralSetting::find(1);
+
+        $rate = $this->regular->fetchUsdNGNRate();
+        $rateUsd = $rate['price']-$settings->rateDiff;
+        $rate = $rateUsd;
+        $value = $rate;
+
+        return $value;
+    }
+    //from ngn to usd
+    public function fetchNgnToUsdRate()
+    {
+        $settings = GeneralSetting::find(1);
+
+        $rate = $this->regular->fetchUsdNGNRate();
+        $rateUsd = $rate['price']+$settings->rateDiff;
+        $rate = $rateUsd;
+        $value = $rate;
+
+        return $value;
+    }
 }

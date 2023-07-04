@@ -37,13 +37,15 @@ class BalanceData extends BaseController
         if (empty($currency)){
             return $this->sendError('fiat.error',['error'=>'Fiat Not supported']);
         }
+        $rateNgn = $this->fetchUsdToNgnRate();
+        $rateUsd = $this->fetchNgnToUsdRate();
         $dataResponse=[
-            'balance'=>$user->balance*$currency->rateNGN,
-            'usdRate'=>$currency->rateUsd,
-            'sellRate'=>$currency->sellRate,
-            'buyRate'=>$currency->buyRate,
+            'balance'=>$user->balance,
+            'usdRate'=>$rateNgn,
+            'sellRate'=>$rateNgn,
+            'buyRate'=>$rateUsd,
             'currency'=>$user->mainCurrency,
-            'NgnBalance'=>$user->balance
+            'NgnBalance'=>$user->balance*$rateNgn
         ];
         return $this->sendResponse($dataResponse,'retrieved');
     }
