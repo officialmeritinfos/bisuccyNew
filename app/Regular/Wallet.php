@@ -71,9 +71,9 @@ class Wallet{
 //        ])->get($this->url.'v3/tatum/rate/'.$crypto.'?basePair='.strtoupper($fiat));
 
         switch ($crypto){
-            case 'BUSD_BSC':
-            case 'USDT_TRON':
+            case 'BUSD':
             case 'USDT':
+            case 'USDC':
                 $coin = 'USDT';
                 $skips = 1;
                 break;

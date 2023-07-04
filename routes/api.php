@@ -182,5 +182,6 @@ Route::post('get_crypto_to_usd_rate',[Utilities::class,'convertFromCryptoToUsd']
 Route::post('get_crypto_to_ngn_rate',[Utilities::class,'convertFromCryptoToNgn']);
 
 Route::post('get_usd_to_ngn/{amount?}',[Utilities::class,'convertUsdToNgn']);
+Route::get('get_token_network/{coin}',[Utilities::class,'supportedCoinNetwork']);
 
 Route::get('testing',[UserData::class,'testEndpointsNew']);

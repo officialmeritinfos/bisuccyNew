@@ -2,6 +2,8 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\EnsureAdminIsLoggedIn;
+use App\Http\Middleware\TwoFactor;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -65,5 +67,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'abilities' => \Laravel\Sanctum\Http\Middleware\CheckAbilities::class,
         'ability' => \Laravel\Sanctum\Http\Middleware\CheckForAnyAbility::class,
+        'twoFactor'=>TwoFactor::class,
+        'isLoggedIn'=>EnsureAdminIsLoggedIn::class,
     ];
 }

@@ -35,7 +35,32 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
+
+            $this->adminRoutes();
+            $this->adminAuthRoutes();
         });
+    }
+    /**
+     * Define the "admin" routes for the application.
+     *
+     * These routes are typically stateless.
+     *
+     * @return void
+     */
+
+    protected function adminRoutes()
+    {
+        Route::name('admin.')->prefix(config('app.admin-route-prefix'))
+            ->middleware(['web','auth','twoFactor','isLoggedIn'])
+            ->namespace($this->namespace)
+            ->group(base_path('routes/admin.php'));
+    }
+    protected function adminAuthRoutes()
+    {
+        Route::name('auth.')->prefix(config('app.auth-route-prefix'))
+            ->middleware(['web'])
+            ->namespace($this->namespace)
+            ->group(base_path('routes/auth.php'));
     }
 
     /**

@@ -30,6 +30,10 @@ return [
 
     'env' => env('APP_ENV', 'production'),
 
+    // Use these in the RouteServiceProvider.php
+    'admin-route-prefix' => 'sysadmin',
+    'auth-route-prefix' => 'sysadmin/auth/',
+
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode
