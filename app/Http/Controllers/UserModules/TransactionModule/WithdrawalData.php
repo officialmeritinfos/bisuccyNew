@@ -5,6 +5,7 @@ namespace App\Http\Controllers\UserModules\TransactionModule;
 use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
 use App\Models\Coin;
+use App\Models\CoinNetwork;
 use App\Models\Deposit;
 use App\Models\GeneralSetting;
 use App\Models\User;
@@ -221,7 +222,8 @@ class WithdrawalData extends BaseController
             'password'=>['required','current_password:api'],
             'memo'=>['nullable','string'],
             'purpose'=>['required','string'],
-            'code'=>['required','numeric']
+            'code'=>['required','numeric'],
+            'network'=>['required','string']
         ])->stopOnFirstFailure();
 
         if ($validator->fails()){
@@ -238,21 +240,32 @@ class WithdrawalData extends BaseController
 
         $coin = Coin::where('asset',$input['asset'])->first();
 
+        //check if the network is supported by the asset
+
+        $coinNetwork = CoinNetwork::where([
+            'asset'=>$coin->asset,
+            'network'=>$input['network']
+        ])->first();
+
+        if (empty($coinNetwork)){
+            return $this->sendError('network.error',['error'=>'Invalid or unsupported network selected']);
+        }
+
         //check of the wallet exists
         $wallet = UserWallet::where(['user'=>$user->id,'asset'=>strtoupper($input['asset'])])->first();
         if (empty($wallet)){
             return $this->sendError('validation.error',['error'=>'Unsupported asset'],422);
         }
         //check if the wallet has enough balance
-        if (($input['amount']+$coin->networkFee)>$wallet->floatBalance) {
+        if (($input['amount']+$coinNetwork->networkFee)>$wallet->floatBalance) {
             return $this->sendError('balance.error',
                 ['error' => 'Insufficient Balance for transfer of '.$input['amount']],
                 422
             );
         }
-        if ($coin->minSend > $input['amount']){
+        if ($coinNetwork->minSend > $input['amount']){
             return $this->sendError('transfer.error', [
-                'error' => 'You can only send a minimum of '.$coin->minSend.' '.$coin->asset],
+                'error' => 'You can only send a minimum of '.$coinNetwork->minSend.' '.$coinNetwork->asset.' on this network.' ],
                 422);
         }
 
@@ -264,8 +277,11 @@ class WithdrawalData extends BaseController
     private  function processWithdrawalToExternal($sender,$input,$walletFrom,$rate,$request)
     {
         $coin = Coin::where('asset',$input['asset'])->first();
+        $coinNetwork = CoinNetwork::where([
+            'asset'=>$input['asset'],'network'=>$input['network']
+        ])->first();
         $balanceDetail=[
-            'floatBalance'=>$walletFrom->floatBalance - ($input['amount']+$coin->networkFee)
+            'floatBalance'=>$walletFrom->floatBalance - ($input['amount']+$coinNetwork->networkFee)
         ];
         $hasMemo = (empty($input['memo']))?2:1;
         $ref = $this->generateRef('withdrawals','reference');
@@ -275,7 +291,8 @@ class WithdrawalData extends BaseController
             'fee'=>$coin->networkFee,'withdrawalType'=>2,'destination'=>'external',
             'addressTo'=>$input['address'],'reference'=>$ref,
             'memo'=>$input['memo'],'hasMemo'=>$hasMemo,'isSystem'=>2,'status'=>2,
-            'balance'=>$walletFrom->floatBalance-($input['amount']+$coin->networkFee),
+            'balance'=>$walletFrom->floatBalance-($input['amount']+$coinNetwork->networkFee),
+            'network'=>$coinNetwork->network
         ];
 
         $withdrawal = Withdrawal::create($dataWithdrawal);

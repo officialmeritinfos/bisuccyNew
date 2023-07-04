@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Utilities;
 use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
 use App\Models\Coin;
+use App\Models\CoinNetwork;
 use App\Models\Country;
 use App\Models\Faq;
 use App\Models\Fiat;
@@ -104,8 +105,12 @@ class Utilities extends BaseController
             $rates =number_format($rate,8);
 
             $rate = str_replace(',','',$rates);
+            $networks = CoinNetwork::where(['asset'=>$coin->asset])->get();
+            $dataNetCo =[];
+            $dataNetCo = $this->getCoinNetworks($networks, $rate, $dataNetCo);
             $data=[
                 'name'=>$coin->name,'asset'=>$coin->asset,
+                'network'=>$dataNetCo,
                 'icon'=>asset('cryptocoins/'.strtolower($coin->icon).'.svg'),
                 'usdRate'=>"$rate"
             ];
@@ -117,24 +122,18 @@ class Utilities extends BaseController
     {
         $coin = Coin::where(['asset'=>strtoupper($asset),'status'=>1])->first();
         $rate = $this->getCryptoRate($coin->asset);
-        switch ($coin->asset){
-            case 'BNB':
-            case 'BCH':
-            case 'LTC':
-            case 'ETH':
-            case 'BTC':
-                $dataResponse=[
-                    'fee'=>[
-                        'data'=>[
-                            'value'=>$coin->networkFee,
-                            'usdRate'=>$coin->networkFee*$rate
-                        ]
-                    ]
-                ];
-                break;
 
-        }
-        return $this->sendResponse($dataResponse,'retrieved');
+        $networks = CoinNetwork::where(['asset'=>$coin->asset])->get();
+        $dataNetCo =[];
+
+        $dataNetCo = $this->getCoinNetworks($networks, $rate, $dataNetCo);
+
+        $data = [
+            'network'=>$dataNetCo,
+            'name' => $coin->name,
+        ];
+
+        return $this->sendResponse($data,'retrieved');
     }
     public function getRecipientDetails($email)
     {
@@ -405,5 +404,63 @@ class Utilities extends BaseController
             return $this->sendResponse($dataReturn,'rate retrieved');
         }
         return $this->sendError('conversion.error',['error'=>'Unable to retrieve rate']);
+    }
+    //fetch supported coin with its network
+    public function supportedCoinNetwork($coins)
+    {
+        $coin = Coin::where('asset',strtoupper($coins))->first();
+        if (!empty($coin)){
+            //get the networks
+            $networks = CoinNetwork::where(['asset'=>$coin->asset])->get();
+            $dataNetCo =[];
+            $rate = $this->getCryptoRate($coin->asset,'USD');
+
+            $rates =number_format($rate,8);
+
+            $rate = str_replace(',','',$rates);
+
+            $dataNetCo = $this->getCoinNetworks($networks, $rate, $dataNetCo);
+
+            return $this->sendResponse([
+                'name'=>$coin->name,
+                'asset'=>$coin->asset,
+                'network'=>$dataNetCo
+            ],'retrieved');
+        }
+        return $this->sendError('asset.error',['error'=>'unsupported asset']);
+    }
+
+    /**
+     * @param $networks
+     * @param array|string $rate
+     * @param array $dataNetCo
+     * @return array
+     */
+    private function getCoinNetworks($networks, array|string $rate, array $dataNetCo): array
+    {
+        if ($networks->count() > 0) {
+            foreach ($networks as $network) {
+                switch ($network->asset) {
+                    case 'BNB':
+                    case 'BCH':
+                    case 'LTC':
+                    case 'ETH':
+                    case 'BTC':
+                        $fee = $network->networkFee;
+                        $usdRate = $network->networkFee * $rate;
+                        break;
+
+                }
+                $dataNet = [
+                    'network' => $network->network,
+                    'fee' => $fee,
+                    'usdRate' => $usdRate,
+                    'minSend' => $network->minSend,
+                    'charge' => $network->charge
+                ];
+                $dataNetCo[] = $dataNet;
+            }
+        }
+        return $dataNetCo;
     }
 }
