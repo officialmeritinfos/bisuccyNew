@@ -13,11 +13,13 @@ use App\Models\GeneralSetting;
 use App\Models\SignalPackage;
 use App\Models\SignalPackageFeature;
 use App\Models\User;
+use App\Regular\Flutterwave;
 use App\Regular\Wallet;
 use App\Traits\PubFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class Utilities extends BaseController
@@ -462,5 +464,66 @@ class Utilities extends BaseController
             }
         }
         return $dataNetCo;
+    }
+    //fetch Nigerian banks
+    public function retrieveBanks()
+    {
+        $flutter = new Flutterwave();
+
+        $banks = $flutter->getBanks();
+
+        $dataBank = [];
+
+        if ($banks->ok()){
+            $response = $banks->json();
+
+            foreach ($response['data'] as $item) {
+                $bank=[
+                    'id'=>$item['id'],
+                    'code'=>$item['code'],
+                    'name'=>$item['name'],
+                ];
+
+                $dataBank[]=$bank;
+            }
+
+            return $this->sendResponse([
+                'bank'=>$dataBank
+            ],'retrieved');
+        }
+    }
+    //verify Account
+    public function verifyAccountNumber(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+            'bankId'=>['required','numeric'],
+            'accountNumber'=>['required','numeric','digits:10']
+        ])->stopOnFirstFailure();
+
+        if ($validator->fails()){
+            return $this->sendError('validation.error',['error'=>$validator->errors()->all()],422);
+        }
+        $input = $validator->validated();
+
+        $flutter=new Flutterwave();
+
+        $dataVerify = [
+            'account_number'=>$input['accountNumber'],
+            'account_bank'=>$input['bankId'],
+        ];
+
+        $response = $flutter->verifyAccountNumber($dataVerify);
+
+        if ($response->ok()){
+            $response = $response->json();
+
+            $dataBank = [
+                'accountName'=>$response['data']['account_name'],
+                'accountNumber'=>$response['data']['account_number']
+            ];
+
+            return $this->sendResponse($dataBank,'retrieved');
+        }
+        return $this->sendError('bank.error',['error'=>'We are unable to verify account details.'],422);
     }
 }

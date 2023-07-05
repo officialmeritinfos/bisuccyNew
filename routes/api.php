@@ -60,6 +60,7 @@ Route::middleware('auth:sanctum')->group(function (){
 
     //Data in the UserData Module
     Route::post('user/user_details',[UserData::class,'getLoggedInUserDetails']);
+    Route::get('user/user_referrals',[UserData::class,'userReferralEarnings']);
     Route::post('user/set_phone',[UserData::class,'setPhone'])
         ->middleware('abilities:user:account');
     Route::post('user/enter_phone_pin',[UserData::class,'verifyPhone'])
@@ -125,7 +126,7 @@ Route::middleware('auth:sanctum')->group(function (){
         ->middleware('abilities:user:account');
     Route::post('user/confirm_fiat_deposit',[FiatDepositData::class,'confirmFiatFunding'])
         ->middleware('abilities:user:account');
-    Route::get('user/get_user_fiat_deposits',[UserData::class,'getUserFiatDeposits'])
+    Route::get('user/get_user_fiat_deposits',[FiatDepositData::class,'getUserFiatDeposits'])
         ->middleware('abilities:user:account');
 
     //Fiat Withdrawal Module
@@ -183,5 +184,7 @@ Route::post('get_crypto_to_ngn_rate',[Utilities::class,'convertFromCryptoToNgn']
 
 Route::post('get_usd_to_ngn/{amount?}',[Utilities::class,'convertUsdToNgn']);
 Route::get('get_token_network/{coin}',[Utilities::class,'supportedCoinNetwork']);
+Route::get('fetch_nigeria_banks',[Utilities::class,'retrieveBanks']);
+Route::post('resolve-account',[Utilities::class,'verifyAccountNumber']);
 
 Route::get('testing',[UserData::class,'testEndpointsNew']);

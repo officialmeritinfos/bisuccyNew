@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\UserModules;
 
 use App\Http\Controllers\Controller;
+use App\Models\ReferralEarning;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
 use App\Models\Coin;
@@ -90,7 +91,8 @@ class UserData extends BaseController
             'timeRenewPayment'=>($user->enrolledInSignal==1)?date('d-m-Y',$user->timeRenewPayment):'none',
             'addressProof'=>asset('user/photo/'.$user->proofOfAddress),
             'submitedId'=>($user->accountVerified==4||$user->accountVerified==1)?true:false,
-            'submitedPhoto'=>(empty($user->photo))?false:true
+            'submitedPhoto'=>(empty($user->photo))?false:true,
+            'referralBalance'=>$user->refBalance,
         ];
         return $this->sendResponse($data, 'retrieved');
     }
@@ -502,5 +504,30 @@ class UserData extends BaseController
             'status'=>$stat,
             'error'=>$error
         ];
+    }
+    //referral earning
+    public function userReferralEarnings()
+    {
+        $user = Auth::user();
+
+        $earnings = ReferralEarning::where('referrer',$user->id)->get();
+
+        if ($earnings->count()<1){
+            return $this->sendError('referral.error',['error'=>'No data'],400);
+        }
+
+        $dataRef=[];
+
+        foreach ($earnings as $earning) {
+            $user = User::where('id',$earning->user)->first();
+
+            $refData=[
+                'downline'=>$user->name,
+                'amount'=>$earning->amount
+            ];
+
+            $dataRef[]=$refData;
+        }
+        return $this->sendResponse($dataRef,'retrieved');
     }
 }

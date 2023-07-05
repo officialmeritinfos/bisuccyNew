@@ -31,5 +31,10 @@ return [
         'isLive'=>2,
         'liveUrl'=>'https://api.oneliquidity.technology/',
         'testUrl'=>'https://sandbox-api.oneliquidity.technology/'
+    ],
+    'flutterwave'=>[
+        'publicKey'   =>'FLWPUBK_TEST-efb266818beecd8080e26bad419572f5-X',
+        'privateKey'  =>'FLWSECK_TEST-8e67dac80646f18c2e44ffa0225fb2ce-X',
+        'url'=>'https://api.flutterwave.com/v3/'
     ]
 ];

@@ -39,6 +39,13 @@ class FiatWithdrawalData extends BaseController
                 422);
         }
 
+        //let's check if user is verified
+        if ($user->accountVerified!=1){
+            return $this->sendError('kyc.error', [
+                'error' => 'You need to complete your KYC first before you can withdraw to your account.'
+            ],422);
+        }
+
 //        $currency = Fiat::where('code',$input['currency'])->first();
 //        $rateNGN = $currency->rateNGN;
 

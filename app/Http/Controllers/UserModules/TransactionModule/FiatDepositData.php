@@ -52,10 +52,15 @@ class FiatDepositData extends BaseController
             return $this->sendError('validation.error',['error'=>'Invalid account'],422);
         }
         $ref = $this->generateRef('fiat_deposits','reference');
+        //get the usd rate and convert to USD
+        $rate = $this->fetchNgnToUsdRate();
+
+        $usdAmount = $input['amount']/$rate;
 
         $dataDeposit = [
             'reference'=>$ref,'amount'=>$input['amount'],
-            'systemAccount'=>$input['bank'],'user'=>$user->id
+            'systemAccount'=>$input['bank'],'user'=>$user->id,
+            'usdRate'=>$rate,'usdAmount'=>$usdAmount
         ];
 
         $deposit = FiatDeposit::create($dataDeposit);
@@ -89,10 +94,14 @@ class FiatDepositData extends BaseController
         if (empty($deposit)){
             return $this->sendError('deposit.error', ['error' => 'invalid deposit reference']);
         }
+
+        $usdAmount = $input['amountPaid']/$deposit->usdRate;
+
+
         $depositData = [
             'bank'=>$input['bankPaidFrom'],'accountName'=>$input['accountName'],
             'accountNumber'=>$input['accountNumber'],'amountPaid'=>$input['amountPaid'],
-            'status'=>4
+            'status'=>4,'usdPaid'=>$usdAmount
         ];
         if (FiatDeposit::where('id',$deposit->id)->update($depositData)){
             $admin = User::where('isAdmin',1)->first();
@@ -151,7 +160,8 @@ class FiatDepositData extends BaseController
                 'bankFrom'=>$deposit->bank,'accountName'=>$deposit->accountName,
                 'accountNumber'=>$deposit->accountNumber,'reference'=>$deposit->reference,
                 'systemBank'=>$systemAccount->bank,'systemAccountName'=>$systemAccount->accountName,
-                'systemAccountNumber'=>$systemAccount->accountNumber,'status'=>$status
+                'systemAccountNumber'=>$systemAccount->accountNumber,'status'=>$status,
+                'usdAmount'=>$deposit->usdAmount,'usdPaid'=>$deposit->usdPaid,'rate'=>$deposit->usdRate
             ];
             $dataCo[]=$data;
         }
