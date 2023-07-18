@@ -36,5 +36,10 @@ return [
         'publicKey'   =>'FLWPUBK_TEST-efb266818beecd8080e26bad419572f5-X',
         'privateKey'  =>'FLWSECK_TEST-8e67dac80646f18c2e44ffa0225fb2ce-X',
         'url'=>'https://api.flutterwave.com/v3/'
+    ],
+    'paystack'=>[
+    'publicKey'   =>'pk_live_ebc3b2f4a26986f18357629b2836b1f8cc19b7f9',
+    'privateKey'  =>'sk_live_600b106dcdff41c5f97fa225f31c290f4e465cb2',
+    'url'=>'https://api.paystack.co/'
     ]
 ];

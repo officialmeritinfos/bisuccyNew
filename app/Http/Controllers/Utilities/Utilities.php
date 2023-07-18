@@ -490,6 +490,8 @@ class Utilities extends BaseController
             return $this->sendResponse([
                 'bank'=>$dataBank
             ],'retrieved');
+        }else{
+            return $this->sendError('bank.error',['error'=>'We are unable to retrieve banks']);
         }
     }
     //verify Account
@@ -507,12 +509,8 @@ class Utilities extends BaseController
 
         $flutter=new Flutterwave();
 
-        $dataVerify = [
-            'account_number'=>$input['accountNumber'],
-            'account_bank'=>$input['bankId'],
-        ];
 
-        $response = $flutter->verifyAccountNumber($dataVerify);
+        $response = $flutter->verifyAccountNumber($input['accountNumber'],$input['bankId']);
 
         if ($response->ok()){
             $response = $response->json();
@@ -524,6 +522,7 @@ class Utilities extends BaseController
 
             return $this->sendResponse($dataBank,'retrieved');
         }
+        Log::info($response->json());
         return $this->sendError('bank.error',['error'=>'We are unable to verify account details.'],422);
     }
 }

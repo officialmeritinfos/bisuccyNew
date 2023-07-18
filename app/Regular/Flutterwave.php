@@ -10,18 +10,18 @@ class Flutterwave
 
     public function __construct()
     {
-        $this->pubKey = config('constant.flutterwave.publicKey');
-        $this->privKey = config('constant.flutterwave.privateKey');
-        $this->url = config('constant.flutterwave.url');
+        $this->pubKey = config('constant.paystack.publicKey');
+        $this->privKey = config('constant.paystack.privateKey');
+        $this->url = config('constant.paystack.url');
     }
     //fetch Nigerian banks
     public function getBanks()
     {
-        return Http::withToken($this->privKey)->get($this->url.'banks/NG');
+        return Http::withToken($this->privKey)->get($this->url.'bank?country=nigeria');
     }
     //verify account number
-    public function verifyAccountNumber($data)
+    public function verifyAccountNumber($accountNumber,$bankCode)
     {
-        return Http::withToken($this->privKey)->post($this->url.'accounts/resolve',$data);
+        return Http::withToken($this->privKey)->get($this->url.'bank/resolve?account_number='.$accountNumber.'&bank_code='.$bankCode);
     }
 }
