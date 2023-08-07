@@ -9,6 +9,7 @@ use App\Models\Deposit;
 use App\Models\Notification;
 use App\Models\Permission;
 use App\Models\User;
+use App\Models\UserWallet;
 use App\Models\Wallet;
 use App\Models\Withdrawal;
 use App\Notifications\AdminMail;
@@ -31,7 +32,7 @@ class UserWallets extends BaseController
 
     public function getWallets($index=0)
     {
-        $wallets = Wallet::offset($index*50)->limit(50)->get();
+        $wallets = UserWallet::offset($index*50)->limit(50)->get();
         if ($wallets->count()<1){
             return $this->sendError('account.error',['error'=>'No data found']);
         }
@@ -40,18 +41,37 @@ class UserWallets extends BaseController
         foreach ($wallets as $wallet) {
             $user = User::where('id',$wallet->user)->first();
             $coin = Coin::where('asset',$wallet->asset)->first();
+
+            $networks = Wallet::where(['user'=>$user->id,'asset'=>$wallet->asset])->get();
+            if ($networks->count()>0){
+                $dataNet = [];
+
+                foreach ($networks as $network) {
+                    $netData = [
+                        'network'=>$network->network,
+                        'address'=>$network->address,
+                        'availableBalance'=>$network->availableBalance,
+                        'mainBalance'=>$network->mainBalance,
+                    ];
+
+                    $dataNet[]=$netData;
+                }
+            }else{
+                $dataNet = [];
+            }
+
             $data = [
                 'id'=>$wallet->id,
-                'address'=>$wallet->address,
-                'asset'=>$wallet->asset,
-                'balance'=>$wallet->availableBalance,
-                'mainBalance'=>$wallet->mainBalance,
-                'memo'=>(empty($wallet->memo))?'':$wallet->memo,
                 'status'=>($wallet->status==1)?'active':'inactive',
                 'dateCreated'=>strtotime($wallet->created_at),
-                'user'=>$user->name,'userId'=>$user->id,
+                'user'=>$user->name,
+                'userId'=>$user->id,
                 'userRef'=>$user->userRef,
-                'coinName'=>$coin->name
+                'coinName'=>$coin->name,
+                'asset'=>$wallet->asset,
+                'address'=>$dataNet,
+                'walletBalance'=>$wallet->floatBalance,
+                'totalDeposit'=>$wallet->availableBalance
             ];
             $dataCo[]=$data;
         }
@@ -68,18 +88,36 @@ class UserWallets extends BaseController
         foreach ($wallets as $wallet) {
             $user = User::where('id',$wallet->user)->first();
             $coin = Coin::where('asset',$wallet->asset)->first();
+
+            $networks = Wallet::where(['user'=>$user->id,'asset'=>$wallet->asset])->get();
+            if ($networks->count()>0){
+                $dataNet = [];
+
+                foreach ($networks as $network) {
+                    $netData = [
+                        'network'=>$network->network,
+                        'address'=>$network->address,
+                        'availableBalance'=>$network->availableBalance,
+                        'mainBalance'=>$network->mainBalance,
+                    ];
+
+                    $dataNet[]=$netData;
+                }
+            }else{
+                $dataNet = [];
+            }
+
             $data = [
                 'id'=>$wallet->id,
-                'address'=>$wallet->address,
                 'asset'=>$wallet->asset,
-                'balance'=>$wallet->availableBalance,
-                'mainBalance'=>$wallet->mainBalance,
-                'memo'=>(empty($wallet->memo))?'':$wallet->memo,
                 'status'=>($wallet->status==1)?'active':'inactive',
                 'dateCreated'=>strtotime($wallet->created_at),
                 'user'=>$user->name,'userId'=>$user->id,
                 'userRef'=>$user->userRef,
-                'coinName'=>$coin->name
+                'coinName'=>$coin->name,
+                'address'=>$dataNet,
+                'walletBalance'=>$wallet->floatBalance,
+                'totalDeposit'=>$wallet->availableBalance
             ];
             $dataCo[]=$data;
         }
@@ -95,18 +133,35 @@ class UserWallets extends BaseController
 
         $user = User::where('id',$wallet->user)->first();
         $coin = Coin::where('asset',$wallet->asset)->first();
+
+        $networks = Wallet::where(['user'=>$user->id,'asset'=>$wallet->asset])->get();
+        if ($networks->count()>0){
+            $dataNet = [];
+
+            foreach ($networks as $network) {
+                $netData = [
+                    'network'=>$network->network,
+                    'address'=>$network->address,
+                    'availableBalance'=>$network->availableBalance,
+                    'mainBalance'=>$network->mainBalance,
+                ];
+
+                $dataNet[]=$netData;
+            }
+        }else{
+            $dataNet = [];
+        }
         $data = [
             'id'=>$wallet->id,
-            'address'=>$wallet->address,
             'asset'=>$wallet->asset,
-            'balance'=>$wallet->availableBalance,
-            'mainBalance'=>$wallet->mainBalance,
-            'memo'=>(empty($wallet->memo))?'':$wallet->memo,
             'status'=>($wallet->status==1)?'active':'inactive',
             'dateCreated'=>strtotime($wallet->created_at),
             'user'=>$user->name,'userId'=>$user->id,
             'userRef'=>$user->userRef,
-            'coinName'=>$coin->name
+            'coinName'=>$coin->name,
+            'address'=>$dataNet,
+            'walletBalance'=>$wallet->floatBalance,
+            'totalDeposit'=>$wallet->availableBalance
         ];
 
         return $this->sendResponse($data, 'retrieved');
@@ -130,8 +185,9 @@ class UserWallets extends BaseController
                 'amount'=>$deposit->amount,'asset'=>$deposit->asset,
                 'name'=>$coin->name,'date'=>strtotime($deposit->created_at),
                 'fiatEquivalent'=>$deposit->amount*$rate,'txId'=>$deposit->transHash,
-                'blockHeight'=>$deposit->blockHeight,'blockHash'=>$deposit->blockHash,
-                'memo'=>$deposit->memo,'user'=>$user->name
+                'memo'=>$deposit->memo,'user'=>$user->name,
+                'network'=>$deposit->network,
+                'depositId'=>$deposit->depositId
             ];
             $dataCo[]=$data;
         }
@@ -181,107 +237,109 @@ class UserWallets extends BaseController
                 'memo'=>$withdrawal->memo,
                 'user'=>$user->name,
                 'fee'=>$withdrawal->fee,
+                'withdrawalType'=>($withdrawal->withdrawalType==2)?'external':'internal',
                 'destination'=>($withdrawal->destination=='external')?'external':$recipient->name,
                 'balanceAfter'=>$withdrawal->balance,
-                'status'=>$status
+                'status'=>$status,
+                'network'=>$withdrawal->network,
             ];
             $dataCo[]=$data;
         }
         return $this->sendResponse($dataCo, 'retrieved');
     }
     //withdraw from the wallet
-    public function withdrawFromWallet(Request $request)
-    {
-        $admin = Auth::user();
-        $validator = Validator::make($request->all(),[
-            'address'=>['required','string'],
-            'memo'=>['nullable','string'],
-            'amount'=>['required','numeric'],
-            'pin'=>['required'],
-            'id'=>['required','numeric'],
-            'asset'=>['required','numeric']
-        ])->stopOnFirstFailure();
-
-        if ($validator->fails()){
-            return $this->sendError('validation.error',['error'=>$validator->errors()->all()],422);
-        }
-        $input = $validator->validated();
-        //check the account pin sent
-        $hashed = Hash::check($input['pin'],$admin->transPin);
-        if (!$hashed){
-            return $this->sendError('account.error',['error'=>'Invalid account pin'],401);
-        }
-        //get the wallet to withdraw from
-        $wallet = Wallet::where('id',$input['id'])->first();
-        if (empty($wallet)){
-            return $this->sendError('wallet.error',['error'=>'Invalid wallet selected'],401);
-        }
-        if ($input['amount']>$wallet->mainBalance){
-            return $this->sendError('wallet.error',['error'=>'Insufficient balance for this withdrawal'],401);
-        }
-        //get the coin and check against the minimum withdrawal
-        $coin = Coin::where('asset',$input['asset'])->first();
-        if ( $input['amount']<$coin->minSend){
-            return $this->sendError('wallet.error',
-                ['error' => 'Minimum Withdrawal allowed is '.$coin->minSend.''.$coin->asset],
-                401);
-        }
-        $rate = $this->getCryptoRate($coin->asset);
-
-        $ref = $this->generateRef('withdrawals','reference');
-        $dataWithdrawal =[
-            'user'=>$admin->id,
-            'mainUser'=>$wallet->user,
-            'reference'=>$ref,
-            'asset'=>$wallet->asset,
-            'amount'=>$input['amount'],
-            'fiatAmount'=>$input['amount']*$rate,
-            'accountId'=>$wallet->accountId,
-            'fee'=>$coin->networkFee,
-            'withdrawalType'=>3,
-            'destination'=>'external',
-            'addressTo'=>$input['address'],
-            'memo'=>$input['memo'],
-            'hasMemo'=>$coin->hasMemo,
-            'isSystem'=>1,
-            'status'=>6,
-            'derivationKey'=>$wallet->derivationKey
-        ];
-
-        $dataBalance=[
-            'mainBalance'=>$wallet->mainBalance-$input['amount'],
-        ];
-
-        $withdrawal = Withdrawal::create($dataWithdrawal);
-        if (!empty($withdrawal)){
-            Wallet::where('id',$wallet->id)->update($dataBalance);
-            $dataNotification=[
-                'user'=>$admin->id,'title'=>'New System Withdrawal',
-                'content'=>'A new system withdrawal of '.$input['amount'].$input['asset'].' was initiated.',
-                'showAdmin'=>1
-            ];
-            $message = "
-                A new system withdrawal has been initiated by ".$admin->name." with reference ".$ref.".
-                <p>The sum of ".$input['amount'].$input['asset']."</p> was withdrawn from the account pending
-                approval.
-            ";
-            $superAdmin = User::where(['isAdmin'=>1,'role'=>1])->first();
-            if (!empty($superAdmin)){
-                $superAdmin->notify(new AdminMail($superAdmin,$message,'New System Withdrawal'));
-            }
-            Notification::create($dataNotification);
-            $dataResponse =[
-                'id'=>$withdrawal->id,
-                'reference'=>$withdrawal->reference,
-                'amount'=>$withdrawal->amount,
-                'fiatEquivalent'=>$withdrawal->fiatAmount,
-                'status'=>($withdrawal->status==1)?'completed':'processing',
-                'address'=>$withdrawal->addressTo,
-            ];
-            return $this->sendResponse($dataResponse,'withdrawal sent.');
-        }
-        return $this->sendError('withdrawal.error',['error'=>'Something went wrong. Try again']);
-    }
+//    public function withdrawFromWallet(Request $request)
+//    {
+//        $admin = Auth::user();
+//        $validator = Validator::make($request->all(),[
+//            'address'=>['required','string'],
+//            'memo'=>['nullable','string'],
+//            'amount'=>['required','numeric'],
+//            'pin'=>['required'],
+//            'id'=>['required','numeric'],
+//            'asset'=>['required','numeric']
+//        ])->stopOnFirstFailure();
+//
+//        if ($validator->fails()){
+//            return $this->sendError('validation.error',['error'=>$validator->errors()->all()],422);
+//        }
+//        $input = $validator->validated();
+//        //check the account pin sent
+//        $hashed = Hash::check($input['pin'],$admin->transPin);
+//        if (!$hashed){
+//            return $this->sendError('account.error',['error'=>'Invalid account pin'],401);
+//        }
+//        //get the wallet to withdraw from
+//        $wallet = Wallet::where('id',$input['id'])->first();
+//        if (empty($wallet)){
+//            return $this->sendError('wallet.error',['error'=>'Invalid wallet selected'],401);
+//        }
+//        if ($input['amount']>$wallet->mainBalance){
+//            return $this->sendError('wallet.error',['error'=>'Insufficient balance for this withdrawal'],401);
+//        }
+//        //get the coin and check against the minimum withdrawal
+//        $coin = Coin::where('asset',$input['asset'])->first();
+//        if ( $input['amount']<$coin->minSend){
+//            return $this->sendError('wallet.error',
+//                ['error' => 'Minimum Withdrawal allowed is '.$coin->minSend.''.$coin->asset],
+//                401);
+//        }
+//        $rate = $this->getCryptoRate($coin->asset);
+//
+//        $ref = $this->generateRef('withdrawals','reference');
+//        $dataWithdrawal =[
+//            'user'=>$admin->id,
+//            'mainUser'=>$wallet->user,
+//            'reference'=>$ref,
+//            'asset'=>$wallet->asset,
+//            'amount'=>$input['amount'],
+//            'fiatAmount'=>$input['amount']*$rate,
+//            'accountId'=>$wallet->accountId,
+//            'fee'=>$coin->networkFee,
+//            'withdrawalType'=>3,
+//            'destination'=>'external',
+//            'addressTo'=>$input['address'],
+//            'memo'=>$input['memo'],
+//            'hasMemo'=>$coin->hasMemo,
+//            'isSystem'=>1,
+//            'status'=>6,
+//            'derivationKey'=>$wallet->derivationKey
+//        ];
+//
+//        $dataBalance=[
+//            'mainBalance'=>$wallet->mainBalance-$input['amount'],
+//        ];
+//
+//        $withdrawal = Withdrawal::create($dataWithdrawal);
+//        if (!empty($withdrawal)){
+//            Wallet::where('id',$wallet->id)->update($dataBalance);
+//            $dataNotification=[
+//                'user'=>$admin->id,'title'=>'New System Withdrawal',
+//                'content'=>'A new system withdrawal of '.$input['amount'].$input['asset'].' was initiated.',
+//                'showAdmin'=>1
+//            ];
+//            $message = "
+//                A new system withdrawal has been initiated by ".$admin->name." with reference ".$ref.".
+//                <p>The sum of ".$input['amount'].$input['asset']."</p> was withdrawn from the account pending
+//                approval.
+//            ";
+//            $superAdmin = User::where(['isAdmin'=>1,'role'=>1])->first();
+//            if (!empty($superAdmin)){
+//                $superAdmin->notify(new AdminMail($superAdmin,$message,'New System Withdrawal'));
+//            }
+//            Notification::create($dataNotification);
+//            $dataResponse =[
+//                'id'=>$withdrawal->id,
+//                'reference'=>$withdrawal->reference,
+//                'amount'=>$withdrawal->amount,
+//                'fiatEquivalent'=>$withdrawal->fiatAmount,
+//                'status'=>($withdrawal->status==1)?'completed':'processing',
+//                'address'=>$withdrawal->addressTo,
+//            ];
+//            return $this->sendResponse($dataResponse,'withdrawal sent.');
+//        }
+//        return $this->sendError('withdrawal.error',['error'=>'Something went wrong. Try again']);
+//    }
     //calculate gas fee for withdrawing from wallet
     public function calculateGasFees(Request $request)
     {
@@ -386,7 +444,7 @@ class UserWallets extends BaseController
             return $this->sendError('account.error',['error'=>'Invalid account pin'],401);
         }
         //get the wallet to top up
-        $wallet = Wallet::where('id',$input['id'])->first();
+        $wallet = UserWallet::where('id',$input['id'])->first();
         if (empty($wallet)){
             return $this->sendError('wallet.error',['error'=>'Invalid wallet selected'],401);
         }
@@ -410,7 +468,7 @@ class UserWallets extends BaseController
             }
         }
         $data=[
-            'availableBalance'=>$wallet->availableBalance+$input['amount']
+            'floatBalance'=>$wallet->floatBalance+$input['amount']
         ];
 
         if (Wallet::where('id',$wallet->id)->update($data)){
@@ -471,7 +529,7 @@ class UserWallets extends BaseController
             }
         }
         $data=[
-            'availableBalance'=>$wallet->availableBalance-$input['amount']
+            'floatBalance'=>$wallet->floatBalance-$input['amount']
         ];
 
         if (Wallet::where('id',$wallet->id)->update($data)){

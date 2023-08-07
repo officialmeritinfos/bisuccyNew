@@ -9,6 +9,7 @@ use App\Models\FiatWithdrawal;
 use App\Models\GeneralSetting;
 use App\Models\Notification;
 use App\Models\Purchase;
+use App\Models\ReferralEarning;
 use App\Models\Sale;
 use App\Models\SignalEnrollmentPayment;
 use App\Models\SignalPackage;
@@ -40,6 +41,18 @@ class Users extends BaseController
         $dataCo=[];
         foreach ($users as $user) {
             $package = SignalPackage::where('id',$user->packageEnrolled)->first();
+            $refEarnings = ReferralEarning::where('referrer',$user->id)->get();
+            $datRefEarn = [];
+
+            foreach ($refEarnings as $refEarning) {
+                $dataRefEarn = [
+                    'amount'=>$refEarning->amount,
+                    'timeEarned'=>strtotime($refEarning->created_at)
+                ];
+
+                $datRefEarn[]=$dataRefEarn;
+            }
+
             $data = [
                 'id'=>$user->id,
                 'reference'=>$user->userRef,
@@ -64,11 +77,13 @@ class Users extends BaseController
                 'canSwap'=>($user->canSwap==1)?'on':'off',
                 'refBy'=>$user->refBy,
                 'accountBalance'=>$user->balance,
+                'refBalance'=>$user->refBalance,
                 'enrolledInSignal'=>($user->enrolledInSignal==1)?'yes':'no',
                 'packageEnrolled'=>(!empty($package))?$package->name:'none',
                 'notification'=>($user->notification==1)?'active':'inactive',
                 'timeRenewPayment'=>($user->enrolledInSignal==1)?date('d-m-Y',$user->timeRenewPayment):'none',
-                'addressProof'=>asset('user/photo/'.$user->proofOfAddress)
+                'addressProof'=>asset('user/photo/'.$user->proofOfAddress),
+                'referralEarning'=>$datRefEarn
             ];
             $dataCo[]=$data;
         }
@@ -81,6 +96,18 @@ class Users extends BaseController
             return $this->sendError('account.error',['error'=>'No data found']);
         }
         $package = SignalPackage::where('id',$user->packageEnrolled)->first();
+
+        $refEarnings = ReferralEarning::where('referrer',$user->id)->get();
+        $datRefEarn = [];
+
+        foreach ($refEarnings as $refEarning) {
+            $dataRefEarn = [
+                'amount'=>$refEarning->amount,
+                'timeEarned'=>strtotime($refEarning->created_at)
+            ];
+
+            $datRefEarn[]=$dataRefEarn;
+        }
         $data = [
             'id'=>$user->id,
             'reference'=>$user->userRef,
@@ -105,10 +132,12 @@ class Users extends BaseController
             'canSwap'=>($user->canSwap==1)?'on':'off',
             'refBy'=>$user->refBy,
             'accountBalance'=>$user->balance,
+            'refBalance'=>$user->refBalance,
             'enrolledInSignal'=>($user->enrolledInSignal==1)?'yes':'no',
             'packageEnrolled'=>(!empty($package))?$package->name:'none',
             'notification'=>($user->notification==1)?'active':'inactive',
             'timeRenewPayment'=>($user->enrolledInSignal==1)?date('d-m-Y',$user->timeRenewPayment):'none',
+            'referralEarning'=>$datRefEarn
         ];
         return $this->sendResponse($data, 'retrieved');
     }
@@ -155,8 +184,8 @@ class Users extends BaseController
                 'amount'=>$deposit->amount,'asset'=>$deposit->asset,
                 'name'=>$coin->name,'date'=>strtotime($deposit->created_at),
                 'fiatEquivalent'=>$deposit->amount*$rate,'txId'=>$deposit->transHash,
-                'blockHeight'=>$deposit->blockHeight,'blockHash'=>$deposit->blockHash,
-                'memo'=>$deposit->memo,'user'=>$user->name
+                'memo'=>$deposit->memo,'user'=>$user->name,
+                'depositId'=>$deposit->depositId
             ];
             $dataCo[]=$data;
         }
@@ -448,7 +477,7 @@ class Users extends BaseController
             Notification::create($dataNotification);
             //mail to user
             $messageToUser = "
-                Your account has been topped up with ".$web->mainCurrency.number_format($input['amount'],2).".
+                Your account has been topped up with $".number_format($input['amount'],2).".
             ";
             $user->notify(new AdminMail($user,$messageToUser,'Account Top-up'));
             //mail to super admin
@@ -456,7 +485,7 @@ class Users extends BaseController
             if (!empty($superAdmin)){
                 $messageToAdmin = "
                     An account with reference <b>".$user->userRef."</b> and name <b> ".$user->name."</b> has been topped
-                    up with <b>".$web->mainCurrency.number_format($input['amount'],2)."</b> by
+                    up with <b>$".number_format($input['amount'],2)."</b> by
                     <b>".$admin->name."</b>.
                 ";
                 $superAdmin->notify(new AdminMail($superAdmin,$messageToAdmin,'Account Top-up'));
@@ -503,7 +532,7 @@ class Users extends BaseController
 
             $dataNotification = [
                 'user'=>$admin->id,'title'=>'User Balance Subtraction',
-                'content'=>$user->name." account was debited of ".$web->mainCurrency.number_format($input['amount'],2),
+                'content'=>$user->name." account was debited of $".number_format($input['amount'],2),
                 'showAdmin'=>1
             ];
 
@@ -513,7 +542,7 @@ class Users extends BaseController
             if (!empty($superAdmin)){
                 $messageToAdmin = "
                     An account with reference <b>".$user->userRef."</b> and name <b> ".$user->name."</b> has been debitted
-                    of <b>".$web->mainCurrency.number_format($input['amount'],2)."</b> by
+                    of <b>$".number_format($input['amount'],2)."</b> by
                     <b>".$admin->name."</b>.
                 ";
                 $superAdmin->notify(new AdminMail($superAdmin,$messageToAdmin,'Account Debit'));
@@ -800,4 +829,5 @@ class Users extends BaseController
         }
         return $this->sendError('user.error',['error'=>'User not found'],421);
     }
+
 }

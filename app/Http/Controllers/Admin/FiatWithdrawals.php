@@ -147,6 +147,7 @@ class FiatWithdrawals extends BaseController
             'amount' => $withdrawal->amount,
             'fiatAmount' => $withdrawal->fiatAmount,
             'amountCredit' => $withdrawal->amountCredit,
+            'rate'=>$withdrawal->rate,
             'charge' => $withdrawal->charge,
             'bank' => $withdrawal->bank,
             'user' => $user->name,

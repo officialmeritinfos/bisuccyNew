@@ -31,8 +31,9 @@ class Deposits extends BaseController
                 'amount'=>$deposit->amount,'asset'=>$deposit->asset,
                 'name'=>$coin->name,'date'=>strtotime($deposit->created_at),
                 'fiatEquivalent'=>$deposit->amount*$rate,'txId'=>$deposit->transHash,
-                'blockHeight'=>$deposit->blockHeight,'blockHash'=>$deposit->blockHash,
-                'memo'=>$deposit->memo,'user'=>$user->name
+                'memo'=>$deposit->memo,'user'=>$user->name,
+                'network'=>$deposit->network,
+                'depositId'=>$deposit->depositId
             ];
             $dataCo[]=$data;
         }

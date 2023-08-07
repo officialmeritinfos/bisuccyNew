@@ -73,7 +73,8 @@ class FiatDeposits extends BaseController
         }
         $user = User::where('id',$deposit->user)->first();
 
-        $newBalance = $user->balance+$deposit->amount;
+        $amountPaid = $deposit->usdPaid;
+        $newBalance = $user->balance+$deposit->usdPaid;
         $dataUser=['balance'=>$newBalance];
         $dataDeposit=[
             'status'=>1,
@@ -84,26 +85,27 @@ class FiatDeposits extends BaseController
 
             $dataNotify=[
                 'title'=>'Deposit confirmation','content'=>'Your Deposit of
-                '.$user->mainCurrency.number_format($deposit->amount,2).' has been confirmed',
+                '.$user->mainCurrency.number_format($deposit->amountPaid,2).' has been confirmed.
+                $'.number_format($amountPaid,2).' has bee funded into your account.',
                 'user'=>$user->id
             ];
             Notification::create($dataNotify);
 
             $dataNotifyAdmin=[
                 'title'=>'Deposit confirmation','content'=>'A Deposit of
-                '.$web->mainCurrency.number_format($deposit->amount,2).' has been confirmed',
+                '.$web->mainCurrency.number_format($deposit->amountPaid,2).' has been confirmed',
                 'user'=>$admin->id,'showAdmin'=>1
             ];
             Notification::create($dataNotifyAdmin);
             //send mails to user
             $userMessage="
                 Your deposit of ".$web->mainCurrency.number_format($deposit->amount,2)." has been credited to
-                your account.<br> Your new Account Balance is ".$web->mainCurrency.number_format($newBalance,2)."
+                your account.<br> Your new Account Balance is $".number_format($newBalance,2)."
             ";
             $user->notify(new AdminMail($user,$userMessage,'Deposit Confirmation'));
             //send app notification
             $appMessage ="
-                Your account has been credited with ".$web->mainCurrency.number_format($deposit->amount,2)."
+                Your account has been credited with $".number_format($deposit->amount,2)."
             ";
             $user->notify(new UserNotification($user,$appMessage,'Account Credited'));
 
@@ -113,8 +115,8 @@ class FiatDeposits extends BaseController
 
                 $message = "
                     A fiat Deposit of ".$user->mainCurrency.number_format($deposit->amount,2)." made
-                    by ".$user->name." was just approved by ".$admin->name.". The amount has been credited to
-                    the user account balance.
+                    by ".$user->name." was just approved by ".$admin->name.". The USD eqivalent amount has been
+                    credited to the user account balance.
                 ";
                 $superAdmin->notify(new AdminMail($superAdmin,$message,'Deposit Approval on '.env('APP_NAME')));
             }
@@ -171,7 +173,7 @@ class FiatDeposits extends BaseController
             Notification::create($dataNotifyAdmin);
             //send mails to user
             $userMessage="
-                Your deposit of ".$web->mainCurrency.number_format($deposit->amount,2)." has been cancelled
+                Your deposit of $".$web->mainCurrency.number_format($deposit->amount,2)." has been cancelled
                 since we are unable to verify that this deposit was made.
             ";
             $user->notify(new AdminMail($user,$userMessage,'Deposit Cancellation'));
@@ -228,7 +230,10 @@ class FiatDeposits extends BaseController
             'systemAccountBank' => $systemAccount->bank,
             'status' => $status,
             'authorizedBy' => $deposit->authorizedBy,
-            'id'=>$deposit->id
+            'id'=>$deposit->id,
+            'usdAmount'=>$deposit->usdAmount,
+            'usdRate'=>$deposit->usdRate,
+            'usdPaid'=>$deposit->usdPaid,
         ];
         return $data;
     }

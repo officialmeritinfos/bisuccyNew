@@ -32,18 +32,40 @@ class Withdrawals extends BaseController
         foreach ($withdrawals as $withdrawal) {
             $user = User::where('id',$withdrawal->user)->first();
             $coin = Coin::where('asset',$withdrawal->asset)->first();
+            if ($withdrawal->destination!='external'){
+                $recipient = User::where('userRef',$withdrawal->destination)->first();
+            }
+            switch ($withdrawal->status){
+                case 1:
+                    $status='completed';
+                    break;
+                case 2:
+                    $status='pending';
+                    break;
+                case 3:
+                    $status='failed';
+                    break;
+                default:
+                    $status='queued';
+                    break;
+            }
             $data = [
                 'id'=>$withdrawal->id,
-                'address'=>$withdrawal->address,
+                'address'=>$withdrawal->addressTo,
                 'asset'=>$withdrawal->asset,
                 'memo'=>(empty($withdrawal->memo))?'':$withdrawal->memo,
-                'status'=>($withdrawal->status==1)?'approved':'pending approval',
+                'status'=>$status,
                 'dateCreated'=>strtotime($withdrawal->created_at),
                 'user'=>$user->name,'userId'=>$user->id,
                 'userRef'=>$user->userRef,
                 'coinName'=>$coin->name,
                 'fiatEquivalent'=>$withdrawal->fiatAmount,
-                'reference'=>$withdrawal->reference
+                'reference'=>$withdrawal->reference,
+                'network'=>$withdrawal->network,
+                'withdrawalType'=>($withdrawal->withdrawalType==2)?'external':'internal',
+                'destination'=>($withdrawal->destination=='external')?'external':$recipient->name,
+                'fee'=>$withdrawal->fee,
+                'balanceAfter'=>$withdrawal->balance,
             ];
             $dataCo[]=$data;
         }
@@ -60,18 +82,41 @@ class Withdrawals extends BaseController
         foreach ($withdrawals as $withdrawal) {
             $user = User::where('id',$withdrawal->user)->first();
             $coin = Coin::where('asset',$withdrawal->asset)->first();
+
+            if ($withdrawal->destination!='external'){
+                $recipient = User::where('userRef',$withdrawal->destination)->first();
+            }
+            switch ($withdrawal->status){
+                case 1:
+                    $status='completed';
+                    break;
+                case 2:
+                    $status='pending';
+                    break;
+                case 3:
+                    $status='failed';
+                    break;
+                default:
+                    $status='queued';
+                    break;
+            }
+
             $data = [
                 'id'=>$withdrawal->id,
                 'address'=>$withdrawal->address,
                 'asset'=>$withdrawal->asset,
                 'memo'=>(empty($withdrawal->memo))?'':$withdrawal->memo,
-                'status'=>($withdrawal->status==1)?'approved':'pending approval',
+                'status'=>$status,
                 'dateCreated'=>strtotime($withdrawal->created_at),
                 'user'=>$user->name,'userId'=>$user->id,
                 'userRef'=>$user->userRef,
                 'coinName'=>$coin->name,
                 'fiatEquivalent'=>$withdrawal->fiatAmount,
-                'reference'=>$withdrawal->reference
+                'reference'=>$withdrawal->reference,
+                'network'=>$withdrawal->network,
+                'withdrawalType'=>($withdrawal->withdrawalType==2)?'external':'internal',
+                'destination'=>($withdrawal->destination=='external')?'external':$recipient->name,
+                'fee'=>$withdrawal->fee
             ];
             $dataCo[]=$data;
         }
