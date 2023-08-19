@@ -39,7 +39,7 @@ class InitializeUserWallet extends Command
                 if ($coins->count()>0){
                     foreach ($coins as $coin) {
                         //get system account
-                        $userAccount = UserWallet::where('asset',$coin->asset)->first();
+                        $userAccount = UserWallet::where('asset',$coin->asset)->where('user',$user->id)->first();
                         if (empty($userAccount)){
                             UserWallet::create([
                                 'user'=>$user->id,
