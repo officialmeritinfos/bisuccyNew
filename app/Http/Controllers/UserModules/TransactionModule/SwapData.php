@@ -72,7 +72,7 @@ class SwapData extends BaseController
             $rate = $secondUsdRate/$firstUsdRate;
         }
         $amountTo = $input['amount']/$rate;
-        $charge = $coinTo->swapCharge;
+        $charge = ($coinTo->swapCharge/100)*$amountTo;
 
         $amountToCredit = $amountTo - $charge;
         $ref = $this->generateRef('swaps','reference');
