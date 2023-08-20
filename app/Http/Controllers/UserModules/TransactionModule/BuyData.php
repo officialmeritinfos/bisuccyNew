@@ -108,16 +108,16 @@ class BuyData extends BaseController
             UserWallet::where(['user'=>$user->id,'id'=>$wallet->id])->update($dataWallet);
             User::where('id',$user->id)->update($dataUser);
             //send a mail to the user
-//            $userMessage = "
-//                    A new purchase of ".$coin->name." has been made on your <b>".env('APP_NAME')."</b> account.
-//                    Find Transaction details below:<br><br>
-//                    <b>Transaction Reference</b>:".$ref."<br><br>
-//                    <b>Fiat Amount</b>: $".number_format($input['amount'])."<br><br>
-//                    <b>Crypto Credited</b>:".$amountCredit.$input['asset']."<br><br>
-//                    <b>Buy Rate</b>:".$usdRate." USD<br><br>
-//                ";
-//
-//            $user->notify(new AdminMail($user,$userMessage,'New '.$coin->name.' purchase'));
+            $userMessage = "
+                    A new purchase of ".$coin->name." has been made on your <b>".env('APP_NAME')."</b> account.
+                    Find Transaction details below:<br><br>
+                    <b>Transaction Reference</b>:".$ref."<br><br>
+                    <b>Fiat Amount</b>: $".number_format($input['amount'])."<br><br>
+                    <b>Crypto Credited</b>:".$amountCredit.$input['asset']."<br><br>
+                    <b>Buy Rate</b>:".$usdRate." USD<br><br>
+                ";
+
+            $user->notify(new AdminMail($user,$userMessage,'New '.$coin->name.' purchase'));
 
             $admin = User::where('isAdmin',1)->first();
             if(!empty($admin)){
