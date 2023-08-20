@@ -110,7 +110,11 @@ class TransactionData extends BaseController
         //get all purchases
         $purchases = Purchase::where(['user'=>$user->id,'asset'=>$crypto])->get();
         $sales = Sale::where(['user'=>$user->id,'asset'=>$crypto])->get();
-        $swaps = Swap::where(['user'=>$user->id,'assetFrom'=>$crypto])->get();
+        //$swaps = Swap::where(['user'=>$user->id,'assetFrom'=>$crypto])->where()->get();
+        $swaps = Swap::where(['user'=>$user->id])
+            ->where(function ($query) use ($crypto){
+                $query->where('assetFrom',$crypto)->orWhere('assetTo',$crypto);
+            })->get();
         $deposits = Deposit::where(['user'=>$user->id,'asset'=>$crypto])->get();
         $withdrawals = Withdrawal::where(['user'=>$user->id,'asset'=>$crypto])->where('isSystem','!=',1)->get();
 
@@ -162,19 +166,38 @@ class TransactionData extends BaseController
         if ($swaps->count()>0){
             foreach ($swaps as $swap) {
 
-                $network = $this->fetchCoinNetwork($crypto);
+                //$network = $this->fetchCoinNetwork($crypto);
 
-                $data=[
-                    'amountFrom'=>$swap->amountFrom,
-                    'amountTo'=>$swap->amountTo,
-                    'amountCredited'=>$swap->amountCredit,
-                    'assetFrom'=>$swap->assetFrom,
-                    'assetTo'=>$swap->assetTo,
-                    'reference'=>$swap->reference,
-                    'charge'=>$swap->charge,
-                    'network'=>$network,
-                    'date'=>(date('Y-m-d',strtotime($swap->created_at)).'('.date('h:ia',strtotime($swap->created_at)).')')
-                ];
+//                $data=[
+//                    'amountFrom'=>$swap->amountFrom,
+//                    'amountTo'=>$swap->amountTo,
+//                    'amountCredited'=>$swap->amountCredit,
+//                    'assetFrom'=>$swap->assetFrom,
+//                    'assetTo'=>$swap->assetTo,
+//                    'reference'=>$swap->reference,
+//                    'charge'=>$swap->charge,
+//                    'network'=>$network,
+//                    'date'=>(date('Y-m-d',strtotime($swap->created_at)).'('.date('h:ia',strtotime($swap->created_at)).')')
+//                ];
+                if ($swap->assetFrom==$crypto){
+                    $network = $this->fetchCoinNetwork($crypto);
+                    $data=[
+                        'amount'=>'-'.$swap->amountFrom,
+                        'asset'=>$swap->assetFrom,
+                        'network'=>$network,
+                        'reference'=>$swap->reference,
+                        'date'=>(date('Y-m-d',strtotime($swap->created_at)).'('.date('h:ia',strtotime($swap->created_at)).')')
+                    ];
+                }else{
+                    $network = $this->fetchCoinNetwork($crypto);
+                    $data=[
+                        'amount'=>'+'.$swap->amountCredit,
+                        'asset'=>$swap->assetTo,
+                        'network'=>$network,
+                        'reference'=>$swap->reference,
+                        'date'=>(date('Y-m-d',strtotime($swap->created_at)).'('.date('h:ia',strtotime($swap->created_at)).')')
+                    ];
+                }
                 $dataSwaps[]=$data;
             }
 
