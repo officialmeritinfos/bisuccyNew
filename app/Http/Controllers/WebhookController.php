@@ -45,18 +45,10 @@ class WebhookController extends Controller
         $mainAmount =  $request->input('data.amount');
         $from_address =  $request->input('data.from_address');
         $to_address =  $request->input('data.to_address');
+        $decimal =  $request->input('data.decimal');
         //convert the amount to main currency amount
-        switch ($currency){
-            case 'BTC':
-                $amount = $mainAmount/10000000;
-                break;
-            case 'ETH':
-                $amount = $mainAmount/100000000000000000;
-                break;
-            default:
-                $amount = $mainAmount;
-                break;
-        }
+        $amount = $mainAmount/pow(10,$decimal);
+
         if ($network=='BTC'){
             $network = 'bitcoin';
         }else{
