@@ -59,6 +59,18 @@ class UserData extends BaseController
         $package = SignalPackage::where('id',$user->packageEnrolled)->first();
         //let's check if the user has a pending signal subscription
         $pendingSubscription = SignalEnrollmentPayment::where(['user'=>$user->id,'status'=>2])->first();
+        $tier =1;
+        //check which tier user is on
+        if ($user->emailVerified==1 && $user->phoneVerified==1){
+            $tier = 1;
+        }
+        if (!empty($user->proofOfAddress)){
+            $tier=2;
+        }
+        if ($user->accountVerified==1){
+            $tier=3;
+        }
+
         $data = [
             'id'=>$user->id,
             'name'=>$user->name,
@@ -93,6 +105,8 @@ class UserData extends BaseController
             'submitedId'=>($user->accountVerified==4||$user->accountVerified==1)?true:false,
             'submitedPhoto'=>(empty($user->photo))?false:true,
             'referralBalance'=>$user->refBalance,
+            'submitedAddress'=>empty($user->proofOfAddress)?false:true,
+            'tier'=>$tier
         ];
         return $this->sendResponse($data, 'retrieved');
     }
