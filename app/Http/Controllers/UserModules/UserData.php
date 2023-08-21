@@ -210,7 +210,7 @@ class UserData extends BaseController
         $user = Auth::user();
         $validator = Validator::make($request->all(),[
             'address'=>['required','string'],
-            'addressImage'=>['required','mimes:jpeg,jpg,png,pdf','max:6000']
+            'addressImage'=>['required','mimes:jpeg,jpg,png','max:6000']
         ])->stopOnFirstFailure();
         if ($validator->fails()){
             return $this->sendError('validation.error',['error'=>$validator->errors()->all()]);
