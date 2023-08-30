@@ -236,10 +236,9 @@ use Illuminate\Support\Facades\Route;
         ->name('getWalletDeposit');//get a wallet deposits
     Route::get('user-wallets/wallet/withdrawals/{wallet}/{index?}', [UserWallets::class, 'walletWithdrawals'])
         ->name('getWalletWithdrawals');//get a wallet withdrawals
-//    Route::post('user-wallets/withdraw', [UserWallets::class, 'withdrawFromWallet'])
-//        ->name('withdrawFromUserWallet');//withdraw from a user wallet
+
     Route::post('get-gas-fee', [UserWallets::class, 'calculateGasFees'])
-        ->name('getGasFee');//estimate fee for transferring from account
+        ->name('getGasFee');//estimate fee for transferring from account deprecated but left for lrgacy purpose
     Route::post('user-wallets/topUp', [UserWallets::class, 'addFunds'])
         ->name('topUpWallet');//top up wallet
     Route::post('user-wallets/subtractFunds', [UserWallets::class, 'subtractFunds'])
