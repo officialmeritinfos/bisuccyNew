@@ -79,7 +79,7 @@ class UserWallets extends BaseController
     }
     public function getUserWallets($user,$index=0)
     {
-        $wallets = Wallet::where('user',$user)->offset($index*50)->limit(50)->get();
+        $wallets = UserWallet::where('user',$user)->offset($index*50)->limit(50)->get();
         if ($wallets->count()<1){
             return $this->sendError('account.error',['error'=>'No data found']);
         }
@@ -126,7 +126,7 @@ class UserWallets extends BaseController
 
     public function walletDetails($id)
     {
-        $wallet = Wallet::where('id',$id)->first();
+        $wallet = UserWallet::where('id',$id)->first();
         if (empty($wallet)){
             return $this->sendError('account.error',['error'=>'No data found']);
         }
@@ -168,7 +168,7 @@ class UserWallets extends BaseController
     }
     public function walletDeposits($id,$index=0)
     {
-        $wallet = Wallet::where('id',$id)->first();
+        $wallet = UserWallet::where('id',$id)->first();
         if (empty($wallet)){
             return $this->sendError('account.error',['error'=>'No data found']);
         }
@@ -196,7 +196,7 @@ class UserWallets extends BaseController
 
     public function walletWithdrawals($id,$index=0)
     {
-        $wallet = Wallet::where('id',$id)->first();
+        $wallet = UserWallet::where('id',$id)->first();
         if (empty($wallet)){
             return $this->sendError('account.error',['error'=>'No data found']);
         }
@@ -341,89 +341,89 @@ class UserWallets extends BaseController
 //        return $this->sendError('withdrawal.error',['error'=>'Something went wrong. Try again']);
 //    }
     //calculate gas fee for withdrawing from wallet
-    public function calculateGasFees(Request $request)
-    {
-        $gateway = new \App\Regular\Wallet();
-
-        $validator =Validator::make($request->all(), [
-            'asset'=>['required',Rule::in(['ETH','USDT','BUSD_BSC'])],
-            'addressTo'=>['required'],
-            'walletFrom'=>['required','numeric']
-        ])->stopOnFirstFailure();
-        if ($validator->fails()){
-            return $this->sendError('validation.error',['error'=>$validator->errors()->all()],422);
-        }
-        $input=$validator->validated();
-
-        $coin = Coin::where('asset',$input['asset'])->first();
-
-        switch ($input['asset']){
-            case 'ETH':
-                $chain ='ETH';
-                $type=2;
-            case 'USDT':
-                $chain='ETH';
-                $type=1;
-                break;
-            default:
-                $chain='BSC';
-                $type=1;
-        }
-        $wallet = Wallet::where('id',$input['walletFrom'])->first();
-
-        if ($type==1){
-            $data=[
-                'chain'=>$chain,
-                'type'=>"TRANSFER_ERC20",
-                'sender'=>$wallet->address,
-                'recipient'=>$input['addressTo'],
-                'contractAddress'=>$coin->contractAddress,
-                'amount'=>Str::remove(',',number_format($input['amount'],6))
-            ];
-
-            //send the request to query for the gas limit and gas price
-            $response = $gateway->estimateGasFee($data);
-            if ($response->ok()){
-                $data = $response->json();
-
-                $gasPrice =$data['gasPrice'] ;
-                $gasLimit = $data['gasLimit'];
-                //to get the ether amount, we multiply and devide by 1G
-                $fee = ($gasPrice*$gasLimit)/1000000000;
-
-                $dataResponse = [
-                    'fee'=>$fee
-                ];
-                return $this->sendResponse($dataResponse,'fees retrieved');
-            }
-            return $this->sendError('fee.error',['error'=>'Unable to estimate gas fees'],321);
-        }else{
-            $data=[
-                'from'=>$wallet->address,
-                'to'=>$input['addressTo'],
-                'amount'=>Str::remove(',',number_format($input['amount'],6))
-            ];
-
-            //send the request to query for the gas limit and gas price
-            $response = $gateway->getEthGas($data);
-            if ($response->ok()){
-                $data = $response->json();
-
-                $gasPriceWei =$data['gasPrice'] ;
-                $gasLimit = $data['gasLimit'];
-                //gas prices received are in wei so we convert to gwei
-                $gasPrice = $gasPriceWei/1000000000;
-                //to get the ether amount, we multiply and devide by 1G
-                $fee = ($gasPrice*$gasLimit)/1000000000;
-
-                $dataResponse = [
-                    'fee'=>$fee
-                ];
-                return $this->sendResponse($dataResponse,'fees retrieved');
-            }
-            return $this->sendError('fee.error',['error'=>'Unable to estimate gas fees'],321);
-        }
-    }
+//    public function calculateGasFees(Request $request)
+//    {
+//        $gateway = new \App\Regular\Wallet();
+//
+//        $validator =Validator::make($request->all(), [
+//            'asset'=>['required',Rule::in(['ETH','USDT','BUSD_BSC'])],
+//            'addressTo'=>['required'],
+//            'walletFrom'=>['required','numeric']
+//        ])->stopOnFirstFailure();
+//        if ($validator->fails()){
+//            return $this->sendError('validation.error',['error'=>$validator->errors()->all()],422);
+//        }
+//        $input=$validator->validated();
+//
+//        $coin = Coin::where('asset',$input['asset'])->first();
+//
+//        switch ($input['asset']){
+//            case 'ETH':
+//                $chain ='ETH';
+//                $type=2;
+//            case 'USDT':
+//                $chain='ETH';
+//                $type=1;
+//                break;
+//            default:
+//                $chain='BSC';
+//                $type=1;
+//        }
+//        $wallet = Wallet::where('id',$input['walletFrom'])->first();
+//
+//        if ($type==1){
+//            $data=[
+//                'chain'=>$chain,
+//                'type'=>"TRANSFER_ERC20",
+//                'sender'=>$wallet->address,
+//                'recipient'=>$input['addressTo'],
+//                'contractAddress'=>$coin->contractAddress,
+//                'amount'=>Str::remove(',',number_format($input['amount'],6))
+//            ];
+//
+//            //send the request to query for the gas limit and gas price
+//            $response = $gateway->estimateGasFee($data);
+//            if ($response->ok()){
+//                $data = $response->json();
+//
+//                $gasPrice =$data['gasPrice'] ;
+//                $gasLimit = $data['gasLimit'];
+//                //to get the ether amount, we multiply and devide by 1G
+//                $fee = ($gasPrice*$gasLimit)/1000000000;
+//
+//                $dataResponse = [
+//                    'fee'=>$fee
+//                ];
+//                return $this->sendResponse($dataResponse,'fees retrieved');
+//            }
+//            return $this->sendError('fee.error',['error'=>'Unable to estimate gas fees'],321);
+//        }else{
+//            $data=[
+//                'from'=>$wallet->address,
+//                'to'=>$input['addressTo'],
+//                'amount'=>Str::remove(',',number_format($input['amount'],6))
+//            ];
+//
+//            //send the request to query for the gas limit and gas price
+//            $response = $gateway->getEthGas($data);
+//            if ($response->ok()){
+//                $data = $response->json();
+//
+//                $gasPriceWei =$data['gasPrice'] ;
+//                $gasLimit = $data['gasLimit'];
+//                //gas prices received are in wei so we convert to gwei
+//                $gasPrice = $gasPriceWei/1000000000;
+//                //to get the ether amount, we multiply and devide by 1G
+//                $fee = ($gasPrice*$gasLimit)/1000000000;
+//
+//                $dataResponse = [
+//                    'fee'=>$fee
+//                ];
+//                return $this->sendResponse($dataResponse,'fees retrieved');
+//            }
+//            return $this->sendError('fee.error',['error'=>'Unable to estimate gas fees'],321);
+//        }
+//    }
     //top-up a particular crypto account
     public function addFunds(Request $request)
     {
