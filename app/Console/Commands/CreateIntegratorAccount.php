@@ -55,13 +55,13 @@ class CreateIntegratorAccount extends Command
             $web = GeneralSetting::find(1);
 
             $data = [
-                'firstName'=>'Michael',
-                'lastName'=>'Erastus',
+                'firstName'=>'Mike',
+                'lastName'=>'Creator',
                 'country'=>'NGA',
-                'businessName'=>'Meritinfos Company Limited',
-                'email'=>'michaelerastus9@gmail.com',
+                'businessName'=>'My First Company',
+                'email'=>'bisuccy@gmail.com',
                 'webhookUrl'=>'https://webhook.site/d51e80bf-b12e-43d0-a824-f7e7e1168924',
-                'contactNumber'=>'+2348147298815',
+                'contactNumber'=>'+2348122467382',
                 'floatCurrencies'=>[
                     'USD','NGN','EUR','GBP'
                 ]
