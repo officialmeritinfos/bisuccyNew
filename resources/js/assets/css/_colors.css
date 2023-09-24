@@ -1,0 +1,22 @@
+/* Default colors */
+:root {
+    --color-primary: theme("colors.rgb.bisuccy.primary");
+    --color-secondary: theme("colors.rgb.slate.200");
+    --color-success: theme("colors.rgb.emerald.600");
+    --color-info: theme("colors.rgb.cyan.500");
+    --color-warning: theme("colors.rgb.yellow.400");
+    --color-pending: theme("colors.rgb.amber.500");
+    --color-danger: theme("colors.rgb.rose.600");
+    --color-light: theme("colors.rgb.slate.100");
+    --color-dark: theme("colors.rgb.slate.800");
+    --color-slate-50: theme("colors.rgb.slate.50");
+    --color-slate-100: theme("colors.rgb.slate.100");
+    --color-slate-200: theme("colors.rgb.slate.200");
+    --color-slate-300: theme("colors.rgb.slate.300");
+    --color-slate-400: theme("colors.rgb.slate.400");
+    --color-slate-500: theme("colors.rgb.slate.500");
+    --color-slate-600: theme("colors.rgb.slate.600");
+    --color-slate-700: theme("colors.rgb.slate.700");
+    --color-slate-800: theme("colors.rgb.slate.800");
+    --color-slate-900: theme("colors.rgb.slate.900");
+}

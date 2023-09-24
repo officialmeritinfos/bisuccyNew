@@ -16,7 +16,7 @@ class Dashboard extends BaseController
 {
     public function landingPage()
     {
-
+        return view('dashboard.index');
     }
     //set account pin for admin
     public function setPin(Request $request)

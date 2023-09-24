@@ -1,0 +1,1 @@
+<template>Hi, I'm home.</template>

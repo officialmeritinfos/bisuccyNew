@@ -1,0 +1,24 @@
+import { createRouter, createWebHistory } from "vue-router";
+// import Home from "../pages/Home.vue"
+const routes = [
+    {
+        path: "/dashboard",
+        name: "home",
+        component: () => import("../pages/Home.vue"),
+    },
+];
+
+const adminPrefix = window.appModule.adminPrefix;
+function makeBaseUrl() {
+    return `${adminPrefix}`;
+}
+
+
+const router = createRouter({
+    history: createWebHistory(makeBaseUrl()),
+    routes,
+    scrollBehavior() {
+        document.getElementById("app").scrollIntoView({ behavior: "smooth" });
+    },
+});
+export default router;

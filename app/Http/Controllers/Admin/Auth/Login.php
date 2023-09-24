@@ -17,7 +17,7 @@ class Login extends BaseController
 {
     public function landingPage()
     {
-
+        return view('auth.login');
     }
 
     public function doLogin(Request $request)
