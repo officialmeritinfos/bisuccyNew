@@ -19,7 +19,7 @@ class FiatWithdrawals extends BaseController
 {
     public function landingPage()
     {
-
+        return view('withdrawals.index');
     }
     //get all withdrawals
     public function getWithdrawals($index=0)

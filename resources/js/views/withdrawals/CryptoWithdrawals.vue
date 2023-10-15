@@ -49,7 +49,7 @@
             <div class="flex flex-col justify-center gap-y divide-y divida-gray-300">
                 <dl class="flex items-center justify-between px-2 py-4">
                     <dt class="text-xs font-medium uppercase">DATE:</dt>
-                    <dd>{{ withdrawalDetails.date }}</dd>
+                    <dd>{{ $h.formatDate(withdrawalDetails.date, 'DD/MM/YYYY') }}</dd>
                 </dl>
                 <dl class="flex items-center justify-between px-2 py-4">
                     <dt class="text-xs font-medium uppercase">USER:</dt>
@@ -106,6 +106,7 @@ import { TabulatorFull as Tabulator } from 'tabulator-tables';
 import PageTitle from '@/components/core/PageTitle.vue';
 import SlideOver from '@/components/core/SlideOver.vue';
 import { useWithdrawalStore } from '../../stores/withdrawals';
+import { helper as $h } from "@/utils/helper";
 
 // Import the stores
 const withdrawalStore = useWithdrawalStore();
@@ -148,6 +149,9 @@ const initTabulator = () => {
                 hozAlign: "left",
                 vertAlign: "middle",
                 headerHozAlign: "left",
+                formatter:function(cell){
+                    return $h.formatDate(cell.getValue(), 'DD/MM/YYYY')
+                },
             },
             {
                 title: "AMOUNT",

@@ -66,7 +66,6 @@ export const useDepositsStore = defineStore("depositsStore", () => {
         try {
             cryptoDepositsList.value = await depositsApi.getAllCryptoDeposits();
             globalStore.loading = false;
-            globalStore.setSuccessMessage(response?.message ? response.message : "Success" )
         } catch(err) {
             globalStore.loading = false;
             globalStore.setErrorMessage(err.response.data?.data?.error ? err.response.data.data.error : err.response.data.message )

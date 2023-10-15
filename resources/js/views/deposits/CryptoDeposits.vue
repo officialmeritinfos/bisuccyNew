@@ -51,88 +51,6 @@
         </div>
     </div>
     <!-- END: HTML Table Data -->
-    <!-- BEGIN: Details slide over -->
-
-    <SlideOver
-        :showSlideOver="showDepositDetails"
-        @hide-slide-over="hideDepositDetails"
-        ref="slideOverComponent"
-    >
-        <template v-slot:header>
-            <h2 class="font-medium text-base mr-auto">
-                {{ $t("fiatdepositdetail") }} : {{ depositDetails.amount }}
-            </h2>
-        </template>
-        <template v-slot:body>
-            <div
-                class="flex flex-col justify-center gap-y divide-y divida-gray-300"
-            >
-                <dl class="flex items-center justify-between px-2 py-4">
-                    <dt class="text-xs font-medium uppercase">DATE:</dt>
-                    <dd>{{ depositDetails.date }}</dd>
-                </dl>
-                <dl class="flex items-center justify-between px-2 py-4">
-                    <dt class="text-xs font-medium uppercase">USER:</dt>
-                    <dd>{{ depositDetails.user }}</dd>
-                </dl>
-                <dl class="flex items-center justify-between px-2 py-4">
-                    <dt class="text-xs font-medium uppercase">STATUS:</dt>
-                    <dd>{{ depositDetails.status }}</dd>
-                </dl>
-                <dl class="flex items-center justify-between px-2 py-4">
-                    <dt class="text-xs font-medium uppercase">AMOUNT:</dt>
-                    <dd>{{ depositDetails.amount }}</dd>
-                </dl>
-                <dl class="flex items-center justify-between px-2 py-4">
-                    <dt class="text-xs font-medium uppercase">AMOUNT PAID:</dt>
-                    <dd>{{ depositDetails.amountPaid }}</dd>
-                </dl>
-                <dl class="flex items-center justify-between px-2 py-4">
-                    <dt class="text-xs font-medium uppercase">ACCOUNT NAME:</dt>
-                    <dd>{{ depositDetails.accountName }}</dd>
-                </dl>
-                <dl class="flex items-center justify-between px-2 py-4">
-                    <dt class="text-xs font-medium uppercase">
-                        ACCOUNT NUMBER:
-                    </dt>
-                    <dd>{{ depositDetails.accountNumber }}</dd>
-                </dl>
-                <dl class="flex items-center justify-between px-2 py-4">
-                    <dt class="text-xs font-medium uppercase">BANK:</dt>
-                    <dd>{{ depositDetails.bank }}</dd>
-                </dl>
-                <dl class="flex items-center justify-between px-2 py-4">
-                    <dt class="text-xs font-medium uppercase">
-                        SYSTEM ACCOUNT:
-                    </dt>
-                    <dd>{{ depositDetails.systemAccount }}</dd>
-                </dl>
-                <dl class="flex items-center justify-between px-2 py-4">
-                    <dt class="text-xs font-medium uppercase">
-                        SYSTEM ACCOUNT NAME:
-                    </dt>
-                    <dd>{{ depositDetails.systemAccountName }}</dd>
-                </dl>
-                <dl class="flex items-center justify-between px-2 py-4">
-                    <dt class="text-xs font-medium uppercase">
-                        SYSTEM ACCOUNT BANK:
-                    </dt>
-                    <dd>{{ depositDetails.systemAccountBank }}</dd>
-                </dl>
-                <dl class="flex items-center justify-between px-2 py-4">
-                    <dt class="text-xs font-medium uppercase">
-                        STATUS:
-                    </dt>
-                    <dd :class="{
-                    'text-warning' : depositDetails.status === 'pending approval',
-                    'text-danger' : depositDetails.status === 'cancelled',
-                    'text-success' : depositDetails.status === 'completed'
-                    }">{{ depositDetails.status }}</dd>
-                </dl>
-            </div>
-        </template>
-    </SlideOver>
-    <!-- END: Details slide over -->
 </template>
 
 <script setup>
@@ -140,8 +58,8 @@ import { ref, onMounted, watch, computed } from "vue";
 import xlsx from "xlsx";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import PageTitle from "@/components/core/PageTitle.vue";
-import SlideOver from "@/components/core/SlideOver.vue";
 import { useDepositsStore } from "../../stores/deposits";
+import { helper as $h } from "@/utils/helper";
 
 // Import the stores
 const depositStore = useDepositsStore();
@@ -184,6 +102,9 @@ const initTabulator = () => {
                 hozAlign: "left",
                 vertAlign: "middle",
                 headerHozAlign: "left",
+                formatter: function (cell) {
+                    return $h.formatDateFromUnix(cell.getValue(), 'DD/MM/YYYY')
+                },
             },
             {
                 title: "AMOUNT",

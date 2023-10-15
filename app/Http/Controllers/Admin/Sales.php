@@ -12,7 +12,7 @@ class Sales extends BaseController
 {
     public function landingPage()
     {
-
+        return view('sales.index');
     }
     //get all sales
     public function getSales($index=0)

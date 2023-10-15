@@ -17,6 +17,9 @@ const helpers = {
   formatDate(date, format) {
     return dayjs(date).format(format);
   },
+  formatDateFromUnix(date, format) {
+    return dayjs(date * 1000).format(format);
+  },
   capitalizeFirstLetter(string) {
     if (string) {
       return string.charAt(0).toUpperCase() + string.slice(1);

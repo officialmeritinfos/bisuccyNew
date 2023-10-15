@@ -69,7 +69,7 @@
             >
                 <dl class="flex items-center justify-between px-2 py-4">
                     <dt class="text-xs font-medium uppercase">DATE:</dt>
-                    <dd>{{ depositDetails.date }}</dd>
+                    <dd>{{ $h.formatDateFromUnix(depositDetails.date, 'DD/MM/YYYY') }}</dd>
                 </dl>
                 <dl class="flex items-center justify-between px-2 py-4">
                     <dt class="text-xs font-medium uppercase">USER:</dt>
@@ -153,6 +153,7 @@ import ApproveButton from "@/components/core/ApproveButton.vue";
 import RejectButton from "@/components/core/RejectButton.vue";
 import { useDepositsStore } from "../../stores/deposits";
 import { useGlobalStore } from "../../stores/global";
+import { helper as $h } from "@/utils/helper";
 
 // Import the stores
 const depositStore = useDepositsStore();
@@ -199,6 +200,9 @@ const initTabulator = () => {
                 hozAlign: "left",
                 vertAlign: "middle",
                 headerHozAlign: "left",
+                formatter:function(cell){
+                    return $h.formatDateFromUnix(cell.getValue(), 'DD/MM/YYYY')
+                },
             },
             {
                 title: "AMOUNT",

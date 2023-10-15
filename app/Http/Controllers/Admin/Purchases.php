@@ -12,7 +12,7 @@ class Purchases extends BaseController
 {
     public function landingPage()
     {
-
+        return view('purchases.index');
     }
     //get all purchases
     public function getPurchases($index=0)

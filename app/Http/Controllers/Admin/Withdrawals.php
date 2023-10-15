@@ -19,7 +19,7 @@ class Withdrawals extends BaseController
 {
     public function landingPage()
     {
-
+        return view('purchases.index');        
     }
 
     public function getWithdrawals($index=0)

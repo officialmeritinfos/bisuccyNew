@@ -77,6 +77,7 @@ use Illuminate\Support\Facades\Route;
     /*=======================FIATS CONTROLLER ROUTES==============*/
     Route::get('fiats', [Fiats::class, 'landingPage'])->name('fiats');//landing page
     Route::get('fiats/all', [Fiats::class, 'getFiats'])->name('getFiats');//fetch all fiats
+    Route::get('fiats/create', [Fiats::class, 'createFiat'])->name('createFiat');//update fiats
     Route::post('fiats/create', [Fiats::class, 'updateFiat'])->name('updateFiats');//update fiats
     /*=======================FIAT WITHDRAWALS CONTROLLER ROUTES==============*/
     Route::get('fiat-withdrawals', [FiatWithdrawals::class, 'landingPage'])->name('fiatWithdrawals');//landing page

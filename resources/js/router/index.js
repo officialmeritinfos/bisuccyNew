@@ -10,6 +10,20 @@ import CryptoDeposits from "@/views/deposits/CryptoDeposits.vue";
 import FiatWithdrawals from "@/views/withdrawals/FiatWithdrawals.vue";
 import CryptoWithdrawals from "@/views/withdrawals/CryptoWithdrawals.vue";
 
+// PURCHASES
+import Purchases from "@/views/purchases/index.vue";
+
+// SALES
+import Sales from "@/views/sales/index.vue";
+
+// SWAPS
+import Swaps from "@/views/swaps/index.vue";
+
+
+// SETTINGS 
+import FiatList from "@/views/settings/FiatList.vue";
+import CreateFiat from "@/views/settings/CreateFiat.vue";
+
 const routes = [
     {
         path: "/dashboard",
@@ -45,6 +59,31 @@ const routes = [
         path: "/settings",
         name: "settings",
         component: Deposits,
+    },
+    {
+        path: "/fiats",
+        name: "fiatList",
+        component: FiatList,
+    },
+    {
+        path: "/fiats/create",
+        name: "createFiat",
+        component: CreateFiat,
+    },
+    {
+        path: "/purchases",
+        name: "purchases",
+        component: Purchases,
+    },
+    {
+        path: "/sales",
+        name: "sales",
+        component: Sales,
+    },
+    {
+        path: "/swaps",
+        name: "swaps",
+        component: Swaps,
     },
 ];
 

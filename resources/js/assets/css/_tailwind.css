@@ -24,4 +24,8 @@
     input.form-control-rounded {
         @apply rounded-full;
     }
+
+    .field-error {
+        @apply block mt-2 text-xs text-red-600;
+    }
 }

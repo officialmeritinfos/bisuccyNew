@@ -13,7 +13,7 @@ class Swaps extends BaseController
 {
     public function landingPage()
     {
-
+        return view('swaps.index');
     }
     //get all Swaps
     public function getSwaps($index=0)

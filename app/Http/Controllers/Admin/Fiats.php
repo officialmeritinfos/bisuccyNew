@@ -14,8 +14,14 @@ class Fiats extends BaseController
 {
     public function landingPage()
     {
-
+        return view('settings.fiats');
     }
+
+    public function createFiat()
+    {
+        return view('settings.create-fiat');
+    }
+
     //get all fiat currencies
     public function getFiats()
     {

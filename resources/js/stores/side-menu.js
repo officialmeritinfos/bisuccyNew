@@ -30,7 +30,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
                     },
                     {
                         icon: "SettingsIcon",
-                        pageName: "fiatWithdrawals",
+                        pageName: "fiatList",
                         title: "Fiat settings",
                     },
                 ],
@@ -52,17 +52,17 @@ export const useSideMenuStore = defineStore("sideMenu", {
                     },
                     {
                         icon: "BriefcaseIcon",
-                        pageName: "cryptoWithdrawals",
+                        pageName: "purchases",
                         title: "Purchases",
                     },
                     {
                         icon: "BarChart2Icon",
-                        pageName: "cryptoWithdrawals",
+                        pageName: "sales",
                         title: "Sales",
                     },
                     {
                         icon: "RefreshCcwIcon",
-                        pageName: "cryptoWithdrawals",
+                        pageName: "swaps",
                         title: "Swaps",
                     },
                 ],
