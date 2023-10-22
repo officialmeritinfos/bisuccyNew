@@ -19,10 +19,24 @@ import Sales from "@/views/sales/index.vue";
 // SWAPS
 import Swaps from "@/views/swaps/index.vue";
 
-
 // SETTINGS 
 import FiatList from "@/views/settings/FiatList.vue";
 import CreateFiat from "@/views/settings/CreateFiat.vue";
+
+// USERS
+import Users from "@/views/users/index.vue";
+import Wallets from "@/views/users/wallets.vue";
+import Banks from "@/views/users/banks.vue";
+
+
+// SIGNALS
+import Signals from "@/views/signals/index.vue";
+import CreateSignal from "@/views/signals/create.vue";
+
+
+// SIGNALS
+import Messages from "@/views/messages/index.vue";
+import CreateMessage from "@/views/messages/create.vue";
 
 const routes = [
     {
@@ -84,6 +98,41 @@ const routes = [
         path: "/swaps",
         name: "swaps",
         component: Swaps,
+    },
+    {
+        path: "/users",
+        name: "users",
+        component: Users,
+    },
+    {
+        path: "/user-wallets",
+        name: "wallets",
+        component: Wallets,
+    },
+    {
+        path: "/user-banks",
+        name: "banks",
+        component: Banks,
+    },
+    {
+        path: "/signals",
+        name: "signals",
+        component: Signals,
+    },
+    {
+        path: "/signals/create",
+        name: "createSignal",
+        component: CreateSignal,
+    },
+    {
+        path: "/messages",
+        name: "messages",
+        component: Messages,
+    },
+    {
+        path: "/messages/create",
+        name: "createMessage",
+        component: CreateMessage,
     },
 ];
 

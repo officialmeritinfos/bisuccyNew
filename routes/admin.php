@@ -95,6 +95,7 @@ use Illuminate\Support\Facades\Route;
     /*=======================MESSAGES CONTROLLER ROUTES==============*/
     Route::get('messages', [Messages::class, 'landingPage'])
         ->name('messages');//popup notifications for app users - landing page
+    Route::get('messages/create', [Messages::class, 'createMessageLanding'])->name('createMessageLanding');
     Route::get('messages/all/{index?}', [Messages::class, 'getMessages'])
         ->name('getMessages');//fetch all messages
     Route::get('messages/{id}', [Messages::class, 'getMessageDetail'])->name('messageId');//fetch a singe message
@@ -143,10 +144,11 @@ use Illuminate\Support\Facades\Route;
     /*=======================SIGNALS CONTROLLER ROUTES==============*/
     Route::get('signals', [Signals::class, 'landingPage'])->name('signals');//landing page
     Route::get('signals/all/{index?}', [Signals::class, 'getSignals'])->name('getSignals');//fetch all signals
+    Route::get('signals/create', [Signals::class, 'createSignalLandingPage'])->name('createSignalLandingPage');//create signal
+    Route::post('signals/create', [Signals::class, 'addSignal'])->name('addSignal'); //add signal
     Route::get('signals/{id}', [Signals::class, 'getSignalById'])->name('getSignalDetail');//fetch single signal
     Route::get('signals/inputs/{signalId}', [Signals::class, 'getSignalInputs'])
         ->name('signalInputs');//fetch signal inputs
-    Route::post('signals/create', [Signals::class, 'addSignal'])->name('addSignal');//add signal
     /*=======================STAFF CONTROLLER ROUTES==============*/
     Route::get('staff', [Staff::class, 'landingPage'])->name('staff');//landing page
     Route::post('staff/add', [Staff::class, 'addStaff'])->name('addStaff');//create staff resource

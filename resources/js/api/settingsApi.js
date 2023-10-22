@@ -18,8 +18,7 @@ export const getFiatList = async () => {
 
 // Fiat Settings  API calls
 export const createFiat = async (payload) => {
-    console.log('payload', payload)
-    const response = await settingsApi.post(`/fiats/create`, payload);
+    const response = await settingsApi.post('/fiats/create', payload);
     return response.data.data;
 }
 

@@ -12,7 +12,7 @@ class UserBanks extends BaseController
 {
     public function landingPage()
     {
-
+        return view('users.banks');
     }
 
     public function getBanks($index=0)

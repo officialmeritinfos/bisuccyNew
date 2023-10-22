@@ -28,7 +28,7 @@ class Users extends BaseController
 {
     public function landingPage()
     {
-
+        return view('users.index');
     }
 
     public function getUsers($index = 0)

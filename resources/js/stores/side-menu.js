@@ -74,29 +74,29 @@ export const useSideMenuStore = defineStore("sideMenu", {
                 subMenu: [
                     {
                         icon: "UserIcon",
-                        pageName: "fiatDeposits",
+                        pageName: "users",
                         title: "Users",
                     },
                     {
                         icon: "WalletIcon",
-                        pageName: "fiatWithdrawals",
+                        pageName: "wallets",
                         title: "Users Wallet",
                     },
                     {
                         icon: "LandmarkIcon",
-                        pageName: "fiatWithdrawals",
+                        pageName: "banks",
                         title: "Users Bank",
                     },
                 ],
             },
             {
                 icon: "SignalIcon",
-                pageName: "settings",
+                pageName: "signals",
                 title: "Signals",
             },
             {
                 icon: "MailIcon",
-                pageName: "settings",
+                pageName: "messages",
                 title: "Messaging",
             },
             {

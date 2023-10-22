@@ -47,5 +47,15 @@
     "sales": "Sales",
     "saleDetails": "Sale Details",
     "swaps": "Swaps",
-    "swapDetails": "Swap Details"
+    "swapDetails": "Swap Details",
+    "users": "Users",
+    "userDetails": "User Information",
+    "usersWallets": "Users Wallets",
+    "usersBanks": "Users Banks",
+    "signals": "Signals",
+    "signalDetails": "Signal Details",
+    "createSignal": "Create Signal",
+    "messages": "Messages",
+    "messageDetails": "Message Details",
+    "createMessage": "Create Message"
 }

@@ -3,7 +3,7 @@
         {{ __('login') }}
     </x-slot>
     <div class="flex content-center items-center justify-center h-full">
-        <div class="w-full lg:w-4/12 px-4">
+        <div class="w-full md:w-5/12 xl:w-4/12 px-4">
             <div class="relative flex flex-col justify-center items-center mb-6">
                 <x-branding.logo-default />
             </div>

@@ -18,7 +18,12 @@ class Signals extends BaseController
     use PubFunctions;
     public function landingPage()
     {
+        return view('signals.index');
+    }
 
+    public function createSignalLandingPage()
+    {
+        return view('signals.create');
     }
 
     public function addSignal(Request $request)

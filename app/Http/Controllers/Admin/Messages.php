@@ -15,7 +15,12 @@ class Messages extends BaseController
 {
     public function landingPage()
     {
+        return view('messages.index');
+    }
 
+    public function createMessageLanding()
+    {
+        return view('messages.create');
     }
 
     /**

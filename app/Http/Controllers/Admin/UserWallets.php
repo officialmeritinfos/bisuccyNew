@@ -27,7 +27,7 @@ class UserWallets extends BaseController
     use PubFunctions;
     public function landingPage()
     {
-
+        return view('users.wallets');
     }
 
     public function getWallets($index=0)
