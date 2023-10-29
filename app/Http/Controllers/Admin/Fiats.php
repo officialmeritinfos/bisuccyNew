@@ -41,7 +41,8 @@ class Fiats extends BaseController
                 'verifiedLimit'=>$fiat->verifiedLimit,'unverifiedLimit'=>$fiat->unverifiedLimit,
                 'withdrawalFee'=>$fiat->withdrawalFee,'minAllowed'=>$fiat->minAllowed,
                 'canWithdraw'=>($fiat->canWithdraw==1)?'yes':'no',
-                'status'=>($fiat->status==1)?'active':'inactive'
+                'status'=>($fiat->status==1)?'active':'inactive',
+                'id'=>$fiat->id
             ];
             $dataCo[]=$data;
         }
@@ -67,7 +68,6 @@ class Fiats extends BaseController
             'minAllowed'=>['required','numeric'],
             'canWithdraw'=>['required','numeric'],
             'status'=>['required','numeric'],
-            'id'=>['required','integer'],
         ])->stopOnFirstFailure();
 
         if ($validator->fails()){
@@ -75,23 +75,24 @@ class Fiats extends BaseController
         }
 
         $input=$validator->validated();
-        //check for the fiat
-        $fiat = Fiat::where('id',$input['id'])->first();
-        if (empty($fiat)){
-            return $this->sendError('fiat.error',['error'=>'Invalid action'],422);
-        }
+        //we will update/create the fiat if it already exists
+        Fiat::updateOrCreate(
+            [
+                'code'=>$input['code']
+            ],
+            [
+                'name'=>$input['name'],'rateUsd'=>$input['usdRate'],
+                'rateNGN'=>$input['ngnRate'],'buyRate'=>$input['buyRate'],'sellRate'=>$input['sellRate'],
+                'symbol'=>$input['sign'],'country'=>$input['country'],'settlementPeriod'=>$input['settlementPeriod'],
+                'verifiedLimit'=>$input['verifiedLimit'],'unverifiedLimit'=>$input['unverifiedLimit'],
+                'withdrawalFee'=>$input['withdrawalFee'],'minAllowed'=>$input['minAllowed'],
+                'canWithdraw'=>$input['canWithdraw'],'feeType'=>1,'status'=>$input['status']
+            ]
+        );
 
-        $dataFiat=[
-            'name'=>$input['name'],'code'=>$input['code'],'rateUsd'=>$input['usdRate'],
-            'rateNGN'=>$input['ngnRate'],'buyRate'=>$input['buyRate'],'sellRate'=>$input['sellRate'],
-            'symbol'=>$input['sign'],'country'=>$input['country'],'settlementPeriod'=>$input['settlementPeriod'],
-            'verifiedLimit'=>$input['verifiedLimit'],'unverifiedLimit'=>$input['unverifiedLimit'],
-            'withdrawalFee'=>$input['withdrawalFee'],'minAllowed'=>$input['minAllowed'],
-            'canWithdraw'=>$input['canWithdraw'],'feeType'=>1,'status'=>$input['status']
-        ];
+        $fiat = Fiat::where('code',$input['code'])->first();
 
-        if (Fiat::where('id',$fiat->id)->update($dataFiat)){
-            $fiat=Fiat::find($fiat->id);
+        if (!empty($fiat)){
 
             $dataResponse=[
                 'name'=>$fiat->name,'code'=>$fiat->code,
