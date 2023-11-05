@@ -12,10 +12,10 @@
     <div>
       <TextField name="timeToBroadcast" label="Broadcast Time" placeholder="" type="datetime-local"/>
     </div>
-
+    
     <div>
-      <TextField name="type" label="Type" placeholder="" type="number" />
-    </div>
+      <SelectField name="type" label="Type" placeholder="" :options="typeOptions"/>
+    </div> 
  
   </div>
 </template>
@@ -26,5 +26,15 @@ import TextField from '@/components/forms/TextField.vue';
 import TextAreaField from '@/components/forms/TextAreaField.vue';
 import SelectField from '@/components/forms/SelectField.vue';
 
+const typeOptions = ref([
+  {
+    label: 'Email Notification',
+    value: 1
+  },
+  {
+    label: 'Mobile Notification',
+    value: 2
+  }
+])
 
 </script>

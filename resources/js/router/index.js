@@ -42,6 +42,11 @@ import CreateMessage from "@/views/messages/create.vue";
 import Notifications from "@/views/notifications/index.vue";
 import CreateNotification from "@/views/notifications/create.vue";
 
+// SYSTEM ACCOUNTS
+import SystemAccounts from "@/views/system-accounts/index.vue";
+import SystemAccountsWithdrawals from "@/views/system-accounts/withdrawals.vue"; 
+import CreateSystemAccountsWithdrawals from "@/views/system-accounts/withdraw.vue"; 
+
 const routes = [
     {
         path: "/dashboard",
@@ -143,10 +148,25 @@ const routes = [
         name: "notifications",
         component: Notifications,
     },
+    // {
+    //     path: "/notifications/create",
+    //     name: "createNotification",
+    //     component: CreateNotification,
+    // },
     {
-        path: "/notifications/create",
-        name: "createNotification",
-        component: CreateNotification,
+        path: "/system-accounts",
+        name: "systemAccounts",
+        component: SystemAccounts,
+    },
+    {
+        path: "/system-accounts/withdrawals",
+        name: "systemAccountWithdrawals",
+        component: SystemAccountsWithdrawals,
+    },
+    {
+        path: "/system-accounts/withdrawals/create/:id",
+        name: "createSystemAccountWithdrawals",
+        component: CreateSystemAccountsWithdrawals,
     },
 ];
 

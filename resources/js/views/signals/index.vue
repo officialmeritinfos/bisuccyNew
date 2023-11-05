@@ -99,7 +99,7 @@ const initTabulator = () => {
 
           // For HTML table
           {
-              title: "DATE",
+              title: "DATE CREATED",
               minWidth: 200,
               responsive: 0,
               field: "createdAt",
@@ -120,25 +120,17 @@ const initTabulator = () => {
               headerHozAlign: "left",
           },
           {
-              title: "CONTENT",
+              title: "PHOTO",
               minWidth: 200,
               responsive: 0,
-              field: "content",
+              field: "photo",
               hozAlign: "left",
               vertAlign: "middle",
               headerHozAlign: "left",
-          },
-          {
-              title: "TIME TO BROADCAST",
-              minWidth: 200,
-              responsive: 0,
-              field: "timeToBroadcast",
-              hozAlign: "left",
-              vertAlign: "middle",
-              headerHozAlign: "left",
-                formatter: function (cell) {
-                    return $h.formatDateFromUnix(cell.getValue(), 'DD/MM/YYYY')
-                },
+              formatter: "image",
+              formatterParams: {
+                height: "30px"
+              }
           },
           {
               title: "STATUS",

@@ -20,7 +20,7 @@ export const useNotificationsStore = defineStore("notificationsStore", () => {
     };
 
     const createNotification = async (payload) => {
-        // Fetch all notifications
+        // Create notification
         globalStore.loading = true;
         try {
             const response = await notificationsApi.createNotification(payload);

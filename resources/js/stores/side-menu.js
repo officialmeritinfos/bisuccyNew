@@ -106,7 +106,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
             },
             {
                 icon: "Settings2Icon",
-                pageName: "settings",
+                pageName: "systemAccounts",
                 title: "System Crypto Acct",
             },
             {

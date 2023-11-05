@@ -22,7 +22,11 @@ class SystemAccounts extends BaseController
     use PubFunctions;
     public function landingPage()
     {
-
+        return view('system-accounts.index');
+    }
+    public function withdrawalslandingPage()
+    {
+        return view('system-accounts.withdrawals');
     }
 
     public function getAccounts()
