@@ -38,6 +38,10 @@ import CreateSignal from "@/views/signals/create.vue";
 import Messages from "@/views/messages/index.vue";
 import CreateMessage from "@/views/messages/create.vue";
 
+// NOTIFICATIONS
+import Notifications from "@/views/notifications/index.vue";
+import CreateNotification from "@/views/notifications/create.vue";
+
 const routes = [
     {
         path: "/dashboard",
@@ -133,6 +137,16 @@ const routes = [
         path: "/messages/create",
         name: "createMessage",
         component: CreateMessage,
+    },
+    {
+        path: "/notifications",
+        name: "notifications",
+        component: Notifications,
+    },
+    {
+        path: "/notifications/create",
+        name: "createNotification",
+        component: CreateNotification,
     },
 ];
 

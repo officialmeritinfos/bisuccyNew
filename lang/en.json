@@ -57,5 +57,8 @@
     "createSignal": "Create Signal",
     "messages": "Messages",
     "messageDetails": "Message Details",
-    "createMessage": "Create Message"
+    "createMessage": "Create Message",
+    "notifications": "Notifications",
+    "notificationDetails": "Notifications Details",
+    "createNotification": "Create Notification"
 }

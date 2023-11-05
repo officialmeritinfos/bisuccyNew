@@ -103,9 +103,11 @@ use Illuminate\Support\Facades\Route;
     /*=======================NOTIFICATIONS CONTROLLER ROUTES==============*/
     Route::get('notifications', [Notifications::class, 'landingPage'])
         ->name('notifications');//landing page
+    Route::get('notifications/create', [Notifications::class, 'createNotificationLanding'])
+    ->name('createNotificationLanding');//landing page
     Route::get('notifications/all/{index?}', [Notifications::class, 'getNotifications'])
         ->name('getNotifications');//get all notifications
-    Route::get('notifications', [Notifications::class, 'getNotificationDetail'])
+    Route::get('notifications/{id}', [Notifications::class, 'getNotificationDetail'])
         ->name('notificationDetails');//fetch a single notification;
     /*=======================PERMISSIONS/ROLE CONTROLLER ROUTES==============*/
     Route::get('permissions', [Permissions::class, 'landingPage'])->name('permissions');//landing page

@@ -1,6 +1,6 @@
 <template>
   <div class="intro-y flex flex-col sm:flex-row items-center mt-8">
-      <PageTitle :title="$t('createMessage')" />
+      <PageTitle :title="$t('createNotification')" />
   </div>
 
   <Form :validation-schema="validationSchema" @submit="handleSubmit">
@@ -24,16 +24,16 @@ import PrimaryButton from "@/components/core/PrimaryButton.vue";
 import { Form } from 'vee-validate';
 import * as Yup from 'yup';
 import { useRouter } from "vue-router";
-import { useMessagesStore } from "@/stores/messages";
+import { useNotificationsStore } from "@/stores/notifications";
 
 // Import the stores
-const messagesStore = useMessagesStore();
+const notificationsStore = useNotificationsStore();
 
 const router = useRouter();
 
 const handleSubmit = async (values) => {
-  await messagesStore.createMessage(values).then(() => {
-    router.push({ name: "messages" });
+  await notificationsStore.createNotification(values).then(() => {
+    router.push({ name: "notifications" });
   })
 }
 
