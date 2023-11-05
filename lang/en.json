@@ -63,8 +63,8 @@
     "notifications": "Notifications",
     "notificationDetails": "Notifications Details",
     "createNotification": "Create Notification",
-    "systemAccounts": "System Accounts",
-    "systemAccountDetails": "System Account Details",
-    "createSystemAccount": "Create System Account",
-    "systemAccountWithdrawals": "System Account Withdrawals"
+    "systemAccounts": "System Crypto Accounts",
+    "systemAccountDetails": "System Crypto Account Details",
+    "createSystemAccount": "Create System Crypto Account",
+    "systemAccountWithdrawals": "System Crypto Account Withdrawals"
 }

@@ -51,20 +51,15 @@ const startWithdrawalProcess = async () => {
 };
 
 const completeWithdrawalProcess = async () => {
-
-  try {
-    await systemAccountsStore.withdrawFromSystemAccount({
-      ...postPayload.value,
-      asset: 1,
-      id: pageRoute.params.id,
-      pin: approvalPin.value
-    })
+  await systemAccountsStore.withdrawFromSystemAccount({
+    ...postPayload.value,
+    asset: 1,
+    id: pageRoute.params.id,
+    pin: approvalPin.value
+  }).then(async () => {
     await globalStore.clearApprovalPin();
     router.push({ name: "systemAccounts" });
-
-  } catch (error) {
-    console.error(error)
-  }
+  })
 
 };
 
