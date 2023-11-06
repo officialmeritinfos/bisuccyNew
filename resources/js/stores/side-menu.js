@@ -101,12 +101,12 @@ export const useSideMenuStore = defineStore("sideMenu", {
             },
             {
                 icon: "BellIcon",
-                pageName: "settings",
+                pageName: "notifications",
                 title: "Notifications",
             },
             {
                 icon: "Settings2Icon",
-                pageName: "settings",
+                pageName: "systemAccounts",
                 title: "System Crypto Acct",
             },
             {

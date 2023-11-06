@@ -20,7 +20,7 @@ export const useSignalsStore = defineStore("signalsStore", () => {
     };
 
     const createSignal = async (payload) => {
-        // Fetch all signals
+        // Create signal
         globalStore.loading = true;
         try {
             const response = await signalsApi.createSignal(payload);

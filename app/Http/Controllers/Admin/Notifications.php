@@ -13,7 +13,12 @@ class Notifications extends BaseController
 {
     public function landingPage()
     {
+        return view('notifications.index');
+    }
 
+    public function createNotificationLanding()
+    {
+        return view('notifications.create');
     }
 
     public function getNotifications($index=0)

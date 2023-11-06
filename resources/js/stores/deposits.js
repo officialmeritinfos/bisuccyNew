@@ -38,12 +38,12 @@ export const useDepositsStore = defineStore("depositsStore", () => {
         try{
             const response = await depositsApi.approveFiatDeposit(payload);
             globalStore.approvalLoader = false;
-            await globalStore.showApprovalPinModal(false)
             globalStore.setSuccessMessage(response?.message ? response.message : "Success" )
         }catch(err) {
             globalStore.approvalLoader = false;
             globalStore.setErrorMessage(err.response.data?.data?.error ? err.response.data.data.error : err.response.data.message )
         }
+        await globalStore.showApprovalPinModal(false)
     };
 
     const rejectFiatDeposit = async (payload) => {
@@ -51,12 +51,12 @@ export const useDepositsStore = defineStore("depositsStore", () => {
         try{
             const response = await depositsApi.rejectFiatDeposit(payload);
             globalStore.approvalLoader = false;
-            await globalStore.showApprovalPinModal(false)
             globalStore.setSuccessMessage(response?.message ? response.message : "Success" )
         }catch(err) {
             globalStore.approvalLoader = false;
             globalStore.setErrorMessage(err.response.data?.data?.error ? err.response.data.data.error : err.response.data.message )
         }
+        await globalStore.showApprovalPinModal(false)
     };
 
     // crypto deposits

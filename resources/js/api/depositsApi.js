@@ -26,17 +26,17 @@ export const getFiatDeposit = async (id) => {
 }
 
 export const approveFiatDeposit = async (payload) => {
-    const response = await depositsApi.post('fiat-deposits/approve', payload);
+    const response = await depositsApi.post('/fiat-deposits/approve', payload);
     return response.data.data;
 }
 
 export const rejectFiatDeposit = async (payload) => {
-    const response = await depositsApi.post('fiat-deposits/cancel', payload);
+    const response = await depositsApi.post('/fiat-deposits/cancel', payload);
     return response.data.data;
 }
 
 export const getAllCryptoDeposits = async (index = 0) => {
-    const response = await depositsApi.get(`deposits/all/${index}`);
+    const response = await depositsApi.get(`/deposits/all/${index}`);
     return response.data.data;
 }
 

@@ -103,9 +103,11 @@ use Illuminate\Support\Facades\Route;
     /*=======================NOTIFICATIONS CONTROLLER ROUTES==============*/
     Route::get('notifications', [Notifications::class, 'landingPage'])
         ->name('notifications');//landing page
+    Route::get('notifications/create', [Notifications::class, 'createNotificationLanding'])
+    ->name('createNotificationLanding');//landing page
     Route::get('notifications/all/{index?}', [Notifications::class, 'getNotifications'])
         ->name('getNotifications');//get all notifications
-    Route::get('notifications', [Notifications::class, 'getNotificationDetail'])
+    Route::get('notifications/{id}', [Notifications::class, 'getNotificationDetail'])
         ->name('notificationDetails');//fetch a single notification;
     /*=======================PERMISSIONS/ROLE CONTROLLER ROUTES==============*/
     Route::get('permissions', [Permissions::class, 'landingPage'])->name('permissions');//landing page
@@ -162,14 +164,18 @@ use Illuminate\Support\Facades\Route;
     Route::get('system-accounts', [SystemAccounts::class, 'landingPage'])->name('accounts');//landing page
     Route::get('system-accounts/all', [SystemAccounts::class, 'getAccounts'])
         ->name('fetchAccounts');//fetch all accounts
-    Route::get('system-accounts/{id}', [SystemAccounts::class, 'accountDetails'])
-        ->name('fetchAccountId');//fetch account by id
-    Route::get('system-accounts/withdrawals', [SystemAccounts::class, 'systemWithdrawals'])
-        ->name('systemWithdrawals');//fetch all withdrawal from crypto reserve
+    Route::get('system-accounts/withdrawals', [SystemAccounts::class, 'withdrawalslandingPage'])
+        ->name('systemWithdrawals');//system account withdrawal
+    Route::get('system-accounts/withdrawals/create/{id}', [SystemAccounts::class, 'withdrawalslandingPage'])
+        ->name('systemWithdrawals');//system account withdrawal
+    Route::get('system-accounts/allWithdrawals', [SystemAccounts::class, 'systemWithdrawals'])
+        ->name('systemWithdrawalList');//fetch all withdrawal from crypto reserve
     Route::post('system-accounts/withdraw', [SystemAccounts::class, 'doWithdrawal'])
         ->name('withdrawalSystemAccount');//withdraw from system account
     Route::post('system-accounts/approveWithdrawal', [SystemAccounts::class, 'approveWithdrawal'])
         ->name('approveSystemWithdrawal');//approve withdrawal from system account
+    Route::get('system-accounts/{id}', [SystemAccounts::class, 'accountDetails'])
+        ->name('fetchAccountId');//fetch account by id
     /*=======================SYSTEM FIAT ACCOUNTS CONTROLLER ROUTES==============*/
     Route::get('system-fiat-accounts', [SystemFiatAccounts::class, 'landingPage'])
         ->name('systemFiatAccount');//landing page

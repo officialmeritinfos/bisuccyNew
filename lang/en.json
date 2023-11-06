@@ -30,6 +30,8 @@
     "fiatwithdrawaldetail": "Fiat Withdrawal",
     "cryptowithdrawals": "Crypto Withdrawals",
     "cryptoDeposits": "Crypto Deposits",
+    "withdraw": "Withdraw",
+    "see withdrawals": "See withdrawals",
     "withdrawals": "Withdrawals",
     "withdrawalDetails": "Withdrawal Details",
     "approve" : "Approve",
@@ -57,5 +59,12 @@
     "createSignal": "Create Signal",
     "messages": "Messages",
     "messageDetails": "Message Details",
-    "createMessage": "Create Message"
+    "createMessage": "Create Message",
+    "notifications": "Notifications",
+    "notificationDetails": "Notifications Details",
+    "createNotification": "Create Notification",
+    "systemAccounts": "System Crypto Accounts",
+    "systemAccountDetails": "System Crypto Account Details",
+    "createSystemAccount": "Create System Crypto Account",
+    "systemAccountWithdrawals": "System Crypto Account Withdrawals"
 }

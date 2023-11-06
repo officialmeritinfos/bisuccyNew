@@ -20,7 +20,7 @@ export const useMessagesStore = defineStore("messagesStore", () => {
     };
 
     const createMessage = async (payload) => {
-        // Fetch all messages
+        // Create message
         globalStore.loading = true;
         try {
             const response = await messagesApi.createMessage(payload);

@@ -44,12 +44,12 @@ export const useWithdrawalStore = defineStore("withdrawalStore", () => {
         try{
             const response = await withdrawalsApi.approveFiatWithdrawal(payload);
             globalStore.approvalLoader = false;
-            await globalStore.showApprovalPinModal(false)
             globalStore.setSuccessMessage(response?.message ? response.message : "Success" )
         }catch(err) {
             globalStore.approvalLoader = false;
             globalStore.setErrorMessage(err.response.data?.data?.error ? err.response.data.data.error : err.response.data.message )
         }
+        await globalStore.showApprovalPinModal(false)
     };
     // reject fiat withdrawal
     const rejectFiatWithdrawal = async (payload) => {

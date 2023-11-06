@@ -1,7 +1,7 @@
 <template>
   <div class="intro-y flex flex-col sm:flex-row items-center mt-8">
-      <PageTitle :title="$t('messages')">
-        <PrimaryButton :text="$t('createMessage')" @click="goToCreate"/>
+      <PageTitle :title="$t('notifications')">
+        <!-- <PrimaryButton :text="$t('createNotification')" @click="goToCreate"/> -->
       </PageTitle>
   </div>
   <!-- BEGIN: HTML Table Data -->
@@ -60,18 +60,18 @@ import { ref, onMounted, watch, computed } from "vue";
 import xlsx from "xlsx";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import PageTitle from "@/components/core/PageTitle.vue";
-import { useMessagesStore } from "../../stores/messages";
+import { useNotificationsStore } from "../../stores/notifications";
 import { helper as $h } from "@/utils/helper";
 import PrimaryButton from "@/components/core/PrimaryButton.vue";
 import { useRouter } from "vue-router";
 
 // Import the stores
-const messagesStore = useMessagesStore();
+const notificationsStore = useNotificationsStore();
 
 const router = useRouter();
 
 // Declare the variables
-const messagesList = ref([]);
+const notificationsList = ref([]);
 const tableRef = ref();
 const tabulator = ref();
 
@@ -86,7 +86,7 @@ const initTabulator = () => {
       layout: "fitColumns",
       responsiveLayout: "collapse",
       placeholder: "No matching records found",
-      data: messagesList.value,
+      data: notificationsList.value,
       columns: [
           {
               formatter: "responsiveCollapse",
@@ -121,7 +121,7 @@ const initTabulator = () => {
           },
           {
               title: "CONTENT",
-              minWidth: 200,
+              minWidth: 700,
               responsive: 0,
               field: "content",
               hozAlign: "left",
@@ -129,28 +129,10 @@ const initTabulator = () => {
               headerHozAlign: "left",
           },
           {
-              title: "TYPE",
+              title: "STAFF",
               minWidth: 200,
               responsive: 0,
-              field: "type",
-              hozAlign: "left",
-              vertAlign: "middle",
-              headerHozAlign: "left",
-          },
-          {
-              title: "TIME TO BROADCAST",
-              minWidth: 200,
-              responsive: 0,
-              field: "timeToBroadcast",
-              hozAlign: "left",
-              vertAlign: "middle",
-              headerHozAlign: "left",
-          },
-          {
-              title: "STATUS",
-              minWidth: 200,
-              responsive: 0,
-              field: "status",
+              field: "staff",
               hozAlign: "left",
               vertAlign: "middle",
               headerHozAlign: "left",
@@ -201,18 +183,18 @@ const onPrint = () => {
 };
 
 watch(
-    computed(() => messagesList.value),
+    computed(() => notificationsList.value),
     () => {
         initTabulator();
     }
 );
 
 onMounted(async () => {
-  messagesList.value = await messagesStore.getMessagesList();
+  notificationsList.value = await notificationsStore.getNotificationsList();
   reInitOnResizeWindow();
 });
 
 const goToCreate = () => {
-    router.push({ name: "createMessage" });
+    router.push({ name: "createNotification" });
 };
 </script>
