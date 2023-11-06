@@ -4,8 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
+use App\Models\Deposit;
 use App\Models\Notification;
+use App\Models\Purchase;
+use App\Models\Sale;
+use App\Models\Swap;
 use App\Models\User;
+use App\Models\Withdrawal;
 use App\Notifications\AdminMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -139,5 +144,136 @@ class Dashboard extends BaseController
             return $this->sendResponse($dataResponse,'account password changed');
         }
         return $this->sendError('security.error',['error'=>'Something went wrong']);
+    }
+    //last five transactions
+    public function latestTransactions()
+    {
+        //fetch the transactions
+        $dataResponse=[
+            'purchases'=>$this->getPurchases(),
+            'sales'=>$this->getSales(),
+        ];
+        return $this->sendResponse($dataResponse,'fetch successful');
+
+    }
+    public function getPurchases()
+    {
+        $purchases = Purchase::limit(5)->orderBy('id','desc')->get();
+        $dataCo=[];
+        foreach ($purchases as $purchase) {
+            $data = $this->getPurchaseData($purchase);
+            $dataCo[]=$data;
+        }
+        return $dataCo;
+    }
+    /**
+     * @param $purchase
+     * @return array
+     */
+    protected function getPurchaseData($purchase): array
+    {
+        $user = User::where('id', $purchase->user)->first();
+        switch ($purchase->status) {
+            case 1:
+                $status = 'completed';
+                break;
+            case 2:
+                $status = 'pending';
+                break;
+            case 3:
+                $status = 'cancelled';
+                break;
+            default:
+                $status = 'pending approval';
+                break;
+        }
+        $data = [
+            'id' => $purchase->id,
+            'reference' => $purchase->reference,
+            'cryptoAmount' => $purchase->amount,
+            'asset' => $purchase->asset,
+            'fiatAmount' => $purchase->fiatAmount,
+            'fiat' => $purchase->fiat,
+            'rateGiven' => $purchase->rate,
+            'ngnRate' => $purchase->rateNGN,
+            'charge' => $purchase->charge,
+            'amountCredited' => $purchase->amountCredit,
+            'status' => $status,
+            'user' => $user->name,
+            'dateInitiated' => $purchase->created_at
+
+        ];
+        return $data;
+    }
+    public function getSales()
+    {
+        $sales = Sale::limit(5)->orderBy('id','desc')->get();
+        $dataCo=[];
+        foreach ($sales as $sale) {
+            $data = $this->getSaleData($sale);
+            $dataCo[]=$data;
+        }
+        return $dataCo;
+    }
+    /**
+     * @param $sale
+     * @return array
+     */
+    protected function getSaleData($sale): array
+    {
+        $user = User::where('id', $sale->user)->first();
+        switch ($sale->status) {
+            case 1:
+                $status = 'completed';
+                break;
+            case 2:
+                $status = 'pending';
+                break;
+            case 3:
+                $status = 'cancelled';
+                break;
+            default:
+                $status = 'pending approval';
+                break;
+        }
+        $data = [
+            'id' => $sale->id,
+            'reference' => $sale->reference,
+            'cryptoAmount' => $sale->amount,
+            'asset' => $sale->asset,
+            'fiatAmount' => $sale->fiatAmount,
+            'fiat' => $sale->fiat,
+            'rateGiven' => $sale->rate,
+            'ngnRate' => $sale->rateNGN,
+            'charge' => $sale->charge,
+            'amountCredited' => $sale->amountCredit,
+            'status' => $status,
+            'user' => $user->name,
+            'dateInitiated' => $sale->created_at
+
+        ];
+        return $data;
+    }
+    //dashboard data - users, transactions etc
+    public function dashboardData()
+    {
+        //fetch the data
+        $users = User::where('isAdmin','!=',1)->get();
+        $sales = Sale::get();
+        $purchases = Purchase::get();
+        $withdrawals = Withdrawal::get();
+        $deposits = Deposit::get();
+        $swap = Swap::get();
+
+        //return their counts
+        $dataResponse=[
+            'users'=>$users->count(),
+            'sales'=>$sales->count(),
+            'purchases'=>$purchases->count(),
+            'withdrawals'=>$withdrawals->count(),
+            'deposits'=>$deposits->count(),
+            'swaps'=>$swap->count(),
+        ];
+        return $this->sendResponse($dataResponse,'fetch successful');
     }
 }
