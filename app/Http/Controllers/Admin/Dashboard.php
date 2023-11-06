@@ -140,6 +140,4 @@ class Dashboard extends BaseController
         }
         return $this->sendError('security.error',['error'=>'Something went wrong']);
     }
-    //five latest transactions
-
 }
