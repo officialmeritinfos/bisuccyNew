@@ -41,7 +41,8 @@ class GeneralSettings extends BaseController
             'canSell'=>($web->canSell)?'yes':'no',
             'canBuy'=>($web->canBuy)?'yes':'no',
             'canSwap'=>($web->canSwap)?'yes':'no',
-            'mainCurrency'=>$web->mainCurrency
+            'mainCurrency'=>$web->mainCurrency,
+            'refBonus'=>$web->refBonus
         ];
 
         return $this->sendResponse($dataResponse,'retrieved');
@@ -70,6 +71,7 @@ class GeneralSettings extends BaseController
             'canBuy'=>['required','integer'],
             'canSwap'=>['required','integer'],
             'mainCurrency'=>['required','alpha'],
+            'refBonus'=>['required','numeric'],
         ])->stopOnFirstFailure();
         if ($validator->fails()){
             return $this->sendError('validation.error',['error'=>$validator->errors()->all()],422);
@@ -94,7 +96,8 @@ class GeneralSettings extends BaseController
             'canSell'=>$input['name'],
             'canBuy'=>$input['name'],
             'canSwap'=>$input['name'],
-            'mainCurrency'=>$input['name']
+            'mainCurrency'=>$input['name'],
+            'refBonus'=>$input['refBonus'],
         ];
         if (GeneralSetting::where('id',$web->id)->update($data)){
             $superAdminMessage="
