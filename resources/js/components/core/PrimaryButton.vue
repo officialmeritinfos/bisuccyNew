@@ -1,5 +1,5 @@
 <template>
-    <button :type="type" class="btn btn-primary text-white w-32" :class="customClass">{{text}}</button>
+    <button :type="type" class="btn btn-primary text-white" :class="customClass">{{text}}</button>
 </template>
 <script setup>
 defineProps({

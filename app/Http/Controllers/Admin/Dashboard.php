@@ -18,6 +18,10 @@ class Dashboard extends BaseController
     {
         return view('dashboard.index');
     }
+    public function profileLandingPage()
+    {
+        return view('dashboard.profile');
+    }
     //set account pin for admin
     public function setPin(Request $request)
     {

@@ -7,6 +7,7 @@ export const useDashboardStore = defineStore("dashboard", () => {
     const globalStore = useGlobalStore();
     // Set the default states
     const adminDetails = ref(null);
+    const dashboardData = ref(null);
 
     // Perform some actions
     const getAdminDetails = async () => {
@@ -28,10 +29,33 @@ export const useDashboardStore = defineStore("dashboard", () => {
         
     }
 
+    const changePassword = async (payload) => {
+        await globalStore.setLoading(true);
+        try{
+            const response = await dashboardApi.changePassword(payload);
+            globalStore.setSuccessMessage(response?.message ? response.message : "Success" )
+            globalStore.showSetPinModal(false);
+        }catch(err) {
+            globalStore.setErrorMessage(err.response.data?.data?.error ? err.response.data.data.error : err.response.data.message )
+        }
+        await globalStore.setLoading(false);
+        
+    }
+
+    const getDashboardData = async () => {
+        await globalStore.setLoading(true);
+        dashboardData.value = await dashboardApi.getDashboardData();
+        await globalStore.setLoading(false);
+    };
+
+
     // expose necessary data
     return { 
         getAdminDetails, 
         adminDetails, 
-        setUserPin 
+        setUserPin,
+        changePassword,
+        getDashboardData,
+        dashboardData 
     };
 });

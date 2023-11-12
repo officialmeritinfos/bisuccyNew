@@ -17,7 +17,12 @@ class SystemFiatAccounts extends BaseController
     //landing page
     public function landingPage()
     {
+        return view('system-accounts.fiat.index');
+    }
 
+    public function createLandingPage()
+    {
+        return view('system-accounts.fiat.create');
     }
 
     public function addAccount(Request $request)

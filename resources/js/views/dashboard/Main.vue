@@ -100,11 +100,16 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import PageTitle from '@/components/core/PageTitle.vue';
 import { useDashboardStore } from '../../stores/dashboard';
 
 const dashboardStore = useDashboardStore();
 const adminProfile = computed(() => dashboardStore.adminDetails)
+const dashboardData = computed(() => dashboardStore.dashboardData)
+
+onMounted(() => {
+  dashboardStore.getDashboardData()
+});
 
 </script>

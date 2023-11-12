@@ -35,9 +35,22 @@ export const approveSystemAccountWithdrawal = async (payload) => {
     return response.data.data;
 }
 
+export const getSystemFiatAccounts = async () => {
+    const response = await systemAccountsApi.get(`/system-fiat-account/all`);
+    return response.data.data;
+}
+
+const addSystemFiatAccount = async (payload) => {
+    const response = await systemAccountsApi.post('/system-fiat-accounts/add', payload);
+    return response.data.data;
+};
+
+
 export default {
     getSystemAccountsList,
     getSystemAccount,
     getSystemAccountWithdrawals,
-    withdrawFromSystemAccount
+    withdrawFromSystemAccount,
+    getSystemFiatAccounts,
+    addSystemFiatAccount
 }
