@@ -71,12 +71,41 @@ export const useSystemAccountsStore = defineStore("systemAccountsStore", () => {
         await globalStore.showApprovalPinModal(false)
     };
 
+    const getSystemFiatAccounts = async () => {
+        // Fetch all system fiat accounts
+        globalStore.loading = true;
+        try {
+            const response = await systemAccountsApi.getSystemFiatAccounts();
+            globalStore.loading = false;
+            return response;
+        } catch(err) {
+            globalStore.loading = false;
+            globalStore.setErrorMessage(err.response.data?.data?.error ? err.response.data.data.error : err.response.data.message )
+        }
+    };
+
+    const addSystemFiatAccount = async (payload) => {
+        globalStore.approvalLoader = true;
+        try{
+            const response = await systemAccountsApi.addSystemFiatAccount(payload);
+            globalStore.approvalLoader = false;
+            globalStore.setSuccessMessage(response?.message ? response.message : "Success" )
+        }catch(err) {
+            globalStore.approvalLoader = false;
+            globalStore.setErrorMessage(err.response.data?.data?.error ? err.response.data.data.error : err.response.data.message )
+        }
+        await globalStore.showApprovalPinModal(false)
+    };
+
+
     // expose necessary data
     return { 
         getSystemAccountsList,
         getSystemAccount,
         getSystemAccountWithdrawals,
         approveSystemWithdrawal,
-        withdrawFromSystemAccount
+        withdrawFromSystemAccount,
+        getSystemFiatAccounts,
+        addSystemFiatAccount
     };
 });

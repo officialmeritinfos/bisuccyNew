@@ -111,7 +111,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
             },
             {
                 icon: "SlidersIcon",
-                pageName: "settings",
+                pageName: "systemFiatAccounts",
                 title: "System Fiat Acct",
             },
             {
@@ -121,14 +121,14 @@ export const useSideMenuStore = defineStore("sideMenu", {
                 subMenu: [
                     {
                         icon: "UserCheckIcon",
-                        pageName: "settings",
-                        title: "Admin Details",
+                        pageName: "profile",
+                        title: "My Profile",
                     },
-                    {
-                        icon: "EyeOffIcon",
-                        pageName: "settings",
-                        title: "Password change",
-                    },
+                    // {
+                    //     icon: "EyeOffIcon",
+                    //     pageName: "settings",
+                    //     title: "Password change",
+                    // },
                     {
                         icon: "KeyIcon",
                         pageName: "settings",

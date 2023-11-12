@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from "@/views/dashboard/Main.vue";
+import Profile from "@/views/dashboard/profile.vue";
 
 // DEPOSITS
 import FiatDeposits from "@/views/deposits/FiatDeposits.vue";
@@ -46,6 +47,8 @@ import CreateNotification from "@/views/notifications/create.vue";
 import SystemAccounts from "@/views/system-accounts/index.vue";
 import SystemAccountsWithdrawals from "@/views/system-accounts/withdrawals.vue"; 
 import CreateSystemAccountsWithdrawals from "@/views/system-accounts/withdraw.vue"; 
+import SystemFiatAccounts from "@/views/system-accounts/fiats.vue";
+import CreateSystemFiatAccount from "@/views/system-accounts/create-fiat.vue";
 
 const routes = [
     {
@@ -58,6 +61,11 @@ const routes = [
     //     name: "deposits",
     //     component: Deposits,
     // },
+    {
+        path: "/dashboard/profile",
+        name: "profile",
+        component: Profile,
+    },
     {
         path: "/fiat-deposits",
         name: "fiatDeposits",
@@ -168,6 +176,16 @@ const routes = [
         name: "createSystemAccountWithdrawals",
         component: CreateSystemAccountsWithdrawals,
     },
+    {
+        path: "/system-fiat-accounts",
+        name: "systemFiatAccounts",
+        component: SystemFiatAccounts,
+    },
+    {
+        path: "/system-fiat-accounts/create",
+        name: "createSystemFiatAccount",
+        component: CreateSystemFiatAccount,
+    }
 ];
 
 const adminPrefix = window.appModule.adminPrefix;

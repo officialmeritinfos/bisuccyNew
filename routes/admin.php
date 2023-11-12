@@ -43,6 +43,8 @@ use Illuminate\Support\Facades\Route;
     Route::get('dashboard', [Dashboard::class, 'landingPage'])->name('index');//landing page
     Route::post('dashboard/set-pin', [Dashboard::class, 'setPin'])
         ->name('setPin');//set account pin needed for approving transactions
+    Route::get('dashboard/profile', [Dashboard::class, 'profileLandingPage'])
+        ->name('getAdminProfile');//fetch the details of the logged in admin
     Route::get('dashboard/admin-details', [Dashboard::class, 'getAdminDetails'])
         ->name('adminDetails');//fetch the details of the logged in admin
     Route::get('dashboard/change-password', [Dashboard::class, 'changePasswordLandingPage'])
@@ -179,6 +181,8 @@ use Illuminate\Support\Facades\Route;
     /*=======================SYSTEM FIAT ACCOUNTS CONTROLLER ROUTES==============*/
     Route::get('system-fiat-accounts', [SystemFiatAccounts::class, 'landingPage'])
         ->name('systemFiatAccount');//landing page
+    Route::get('system-fiat-accounts/create', [SystemFiatAccounts::class, 'createLandingPage'])
+        ->name('createSystemFiatAccount');//landing page
     Route::get('system-fiat-account/all', [SystemFiatAccounts::class, 'getAccounts'])
         ->name('getSystemFIatAccount');//fetch all fiat accounts
     Route::post('system-fiat-accounts/add', [SystemFiatAccounts::class, 'addAccount'])

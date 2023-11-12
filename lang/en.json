@@ -66,5 +66,9 @@
     "systemAccounts": "System Crypto Accounts",
     "systemAccountDetails": "System Crypto Account Details",
     "createSystemAccount": "Create System Crypto Account",
-    "systemAccountWithdrawals": "System Crypto Account Withdrawals"
+    "systemAccountWithdrawals": "System Crypto Account Withdrawals",
+    "systemFiatAccounts": "System Fiat Accounts",
+    "createSystemFiatAccount": "Create System Fiat",
+    "profile": "My Profile",
+    "profile information": "Profile Information"
 }

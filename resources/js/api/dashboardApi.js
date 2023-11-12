@@ -21,7 +21,21 @@ export const setUserPin = async (payload) => {
     return response.data;
 }
 
+// Change account password
+const changePassword = async (payload) => {
+    const response = await dashboardApi.post('/dashboard/do-change-password', payload);
+    return response.data.data;
+};
+
+// Get admin profile
+export const getDashboardData = async () => {
+    const response = await dashboardApi.get(`/dashboard/get-dashboard-data`);
+    return response.data.data;
+}
+
 export default {
     getAdminDetails,
-    setUserPin
+    setUserPin,
+    changePassword,
+    getDashboardData
 }
