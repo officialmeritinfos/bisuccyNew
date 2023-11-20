@@ -28,6 +28,17 @@ import CreateFiat from "@/views/settings/CreateFiat.vue";
 import Users from "@/views/users/index.vue";
 import Wallets from "@/views/users/wallets.vue";
 import Banks from "@/views/users/banks.vue";
+import UserProfile from "@/views/users/user/index.vue";
+import UserWithdrawals from "@/views/users/user/withdrawals.vue";
+import UserDeposits from "@/views/users/user/deposits.vue";
+import UserSwaps from "@/views/users/user/swaps.vue";
+import UserPurchases from "@/views/users/user/purchases.vue";
+import UserSales from "@/views/users/user/sales.vue";
+import UserSignals from "@/views/users/user/signals.vue";
+import UserFiatWithdrawals from "@/views/users/user/fiat-withdrawals.vue";
+import UserBanks from "@/views/users/user/banks.vue";
+import UserReferrals from "@/views/users/user/referrals.vue";
+import UserVerification from "@/views/users/user/verification.vue";
 
 
 // SIGNALS
@@ -122,14 +133,69 @@ const routes = [
         component: Users,
     },
     {
-        path: "/user-wallets",
+        path: "/users-wallets",
         name: "wallets",
         component: Wallets,
     },
     {
-        path: "/user-banks",
+        path: "/users-banks",
         name: "banks",
         component: Banks,
+    },
+    {
+        path: "/users/withdrawals/:id",
+        name: "userWithdrawals",
+        component: UserWithdrawals,
+    },
+    {
+        path: "/users/deposits/:id",
+        name: "userDeposits",
+        component: UserDeposits
+    },
+    {
+        path: "/users/purchases/:id",
+        name: "userPurchases",
+        component: UserPurchases
+    },
+    {
+        path: "/users/swaps/:id",
+        name: "userSwaps",
+        component: UserSwaps
+    },
+    {
+        path: "/users/sales/:id",
+        name: "userSales",
+        component: UserSales
+    },
+    {
+        path: "/users/signal-payments/:id",
+        name: "userSignals",
+        component: UserSignals
+    },
+    {
+        path: "/users/fiat-withdrawals/:id",
+        name: "userFiatWithdrawals",
+        component: UserFiatWithdrawals
+    },
+    {
+        path: "/users/banks/:id",
+        name: "userBanks",
+        component: UserBanks
+    },
+    {
+        path: "/users/referrals/:id",
+        name: "userReferrals",
+        component: UserReferrals
+    },
+    {
+        path: "/users/documents/:id",
+        name: "userVerification",
+        component: UserVerification
+    },
+    {
+        path: "/users/:id",
+        name: "userProfile",
+        component: UserProfile
     },
     {
         path: "/signals",

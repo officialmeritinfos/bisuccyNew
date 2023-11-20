@@ -10,7 +10,7 @@
     </nav>
     <!-- END: Breadcrumb -->
     <!-- BEGIN: Notifications -->
-    <Dropdown class="intro-x mr-auto sm:mr-6">
+    <!-- <Dropdown class="intro-x mr-auto sm:mr-6">
       <DropdownToggle
         tag="div"
         role="button"
@@ -53,7 +53,7 @@
           </div>
         </DropdownContent>
       </DropdownMenu>
-    </Dropdown>
+    </Dropdown> -->
     <!-- END: Notifications -->
     <!-- BEGIN: Account Menu -->
     <Dropdown class="intro-x w-8 h-8">
@@ -64,29 +64,23 @@
       >
         <img
           alt="Bisuccy User"
-          :src="$f()[9].photos[0]"
+          src="/img/user-profile-icon.png"
         />
       </DropdownToggle>
       <DropdownMenu class="w-56">
         <DropdownContent class="bg-primary text-white">
           <DropdownHeader tag="div" class="!font-normal">
-            <div class="font-medium">{{ $f()[0].users[0].name }}</div>
+            <div class="font-medium">{{ adminProfile?.name }}</div>
             <div class="text-xs text-white/70 mt-0.5 dark:text-slate-500">
-              {{ $f()[0].jobs[0] }}
+              Staff
             </div>
           </DropdownHeader>
           <DropdownDivider class="border-white/[0.08]" />
-          <DropdownItem class="dropdown-item hover:bg-white/5">
+          <DropdownItem class="dropdown-item hover:bg-white/5" @click="goToProfile">
             <UserIcon class="w-4 h-4 mr-2" /> Profile
           </DropdownItem>
           <DropdownItem class="dropdown-item hover:bg-white/5" @click="setMyPin">
             <KeyIcon class="w-4 h-4 mr-2" /> Set Pin
-          </DropdownItem>
-          <DropdownItem class="dropdown-item hover:bg-white/5">
-            <LockIcon class="w-4 h-4 mr-2" /> Reset Password
-          </DropdownItem>
-          <DropdownItem class="dropdown-item hover:bg-white/5">
-            <HelpCircleIcon class="w-4 h-4 mr-2" /> Help
           </DropdownItem>
           <DropdownDivider class="border-white/[0.08]" />
           <DropdownItem class="dropdown-item hover:bg-white/5" @click="logout">
@@ -101,8 +95,14 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import {useGlobalStore} from "../../stores/global";
+import { ref, computed } from "vue";
+import {useGlobalStore} from "@/stores/global";
+import { useDashboardStore } from "@/stores/dashboard";
+import { useRouter } from "vue-router";
+
+const dashboardStore = useDashboardStore();
+
+const adminProfile = computed(() => dashboardStore.adminDetails)
 
 const searchDropdown = ref(false);
 const showSearchDropdown = () => {
@@ -112,12 +112,18 @@ const hideSearchDropdown = () => {
   searchDropdown.value = false;
 };
 
+const router = useRouter();
+
 const logout = () => {
   useGlobalStore().logMeOut()
 }
 
 const setMyPin = () => {
   useGlobalStore().showSetPinModal(true)
+}
+
+const goToProfile = () => {
+  router.push({ name: "profile" });
 }
 
 </script>

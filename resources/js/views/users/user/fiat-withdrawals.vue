@@ -1,6 +1,6 @@
 <template>
     <div class="intro-y flex flex-col sm:flex-row items-center mt-8">
-        <PageTitle :title="$t('users')" />
+        <PageTitle :title="$t('userFiatWithdrawals')" />
     </div>
     <!-- BEGIN: HTML Table Data -->
     <div class="intro-y box p-5 mt-5">
@@ -48,18 +48,19 @@ import { ref, onMounted, watch, computed } from "vue";
 import xlsx from "xlsx";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import PageTitle from "@/components/core/PageTitle.vue";
-import { useUserStore } from "../../stores/user";
-import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/user";
+import { helper as $h } from "@/utils/helper";
+import { useRoute } from "vue-router";
 
 // Import the stores
 const userStore = useUserStore();
 
 // Declare the variables
-const userList = ref([]);
+const tableData = ref([]);
 const tableRef = ref();
 const tabulator = ref();
 
-const router = useRouter();
+const route = useRoute();
 
 const initTabulator = () => {
     tabulator.value = new Tabulator(tableRef.value, {
@@ -72,7 +73,7 @@ const initTabulator = () => {
         layout: "fitColumns",
         responsiveLayout: "collapse",
         placeholder: "No matching records found",
-        data: userList.value,
+        data: tableData.value,
         columns: [
             {
                 formatter: "responsiveCollapse",
@@ -85,151 +86,59 @@ const initTabulator = () => {
 
             // For HTML table
             {
-                title: "EMAIL",
+                title: "DATE",
                 minWidth: 200,
                 responsive: 0,
-                field: "email",
+                field: "date",
                 hozAlign: "left",
                 vertAlign: "middle",
                 headerHozAlign: "left",
+                formatter: function (cell) {
+                    return $h.formatDateFromUnix(cell.getValue(), 'DD/MM/YYYY')
+                },
             },
             {
-                title: "ACCT BAL",
+                title: "AMOUNT",
                 minWidth: 200,
                 responsive: 0,
-                field: "accountBalance",
+                field: "amount",
                 hozAlign: "left",
                 vertAlign: "middle",
                 headerHozAlign: "left",
             },
             {
-                title: "PHONE",
+                title: "ACCOUNT NAME",
                 minWidth: 200,
                 responsive: 0,
-                field: "phone",
-                hozAlign: "left",
+                field: "accountName",
                 vertAlign: "middle",
-                headerHozAlign: "left",
+                hozAlign: "left",
+                headerHozAlign: "left"
             },
             {
-                title: "PHONE VERIFIED",
+                title: "ACCOUNT NUMBER",
                 minWidth: 200,
-                responsive: 0,
-                field: "phoneVerified",
-                hozAlign: "left",
+                field: "accountNumber",
                 vertAlign: "middle",
-                headerHozAlign: "left",
+                hozAlign: "left",
+                headerHozAlign: "left"
             },
             {
-                title: "ADDRESS",
+                title: "BANK",
                 minWidth: 200,
-                responsive: 0,
-                field: "address",
-                hozAlign: "left",
+                field: "bank",
                 vertAlign: "middle",
-                headerHozAlign: "left",
+                hozAlign: "left",
+                headerHozAlign: "left"
             },
             {
-                title: "CITY",
+                title: "USER",
                 minWidth: 200,
-                responsive: 0,
-                field: "city",
+                field: "user",
                 vertAlign: "middle",
-                hozAlign: "left",
-                headerHozAlign: "left",
-            },
-            {
-                title: "STATE",
-                minWidth: 200,
-                responsive: 0,
-                field: "state",
-                vertAlign: "middle",
-                hozAlign: "left",
-                headerHozAlign: "left",
-            },
-            {
-                title: "COUNTRY",
-                minWidth: 200,
-                responsive: 0,
-                field: "city",
-                vertAlign: "middle",
-                hozAlign: "left",
-                headerHozAlign: "left",
-            },
-            {
-                title: "EMAIL VERIFIED",
-                minWidth: 200,
-                field: "emailVerified",
-                vertAlign: "middle",
-                hozAlign: "left",
-                headerHozAlign: "left",
-            },
-            {
-                title: "REF. BY",
-                minWidth: 200,
-                responsive: 1,
-                field: "refBy",
-                vertAlign: "middle",
-                hozAlign: "left",
-                headerHozAlign: "left",
-            },
-            {
-                title: "NOTIFICATION",
-                minWidth: 200,
-                responsive: 1,
-                field: "notification",
-                vertAlign: "middle",
-                hozAlign: "left",
-                headerHozAlign: "left",
-            },
-            {
-                title: "CAN BUY",
-                minWidth: 200,
-                responsive: 2,
-                field: "canBuy",
-                vertAlign: "middle",
-                hozAlign: "left",
-            },
-            {
-                title: "CAN SELL",
-                minWidth: 200,
-                responsive: 2,
-                field: "canSell",
-                vertAlign: "middle",
-                hozAlign: "left",
-            },
-            {
-                title: "CAN SWAP",
-                minWidth: 200,
-                responsive: 3,
-                field: "canSwap",
-                vertAlign: "middle",
-                hozAlign: "left",
-            },
-            {
-                title: "CAN SEND CRYPTO",
-                minWidth: 200,
-                responsive: 3,
-                field: "canSendCrypto",
-                vertAlign: "middle",
-                hozAlign: "left",
-            },
-            {
-                title: "2FA",
-                minWidth: 200,
-                responsive: 3,
-                field: "twoFactor",
-                vertAlign: "middle",
-                hozAlign: "left",
-            },
-            // {
-            //     title: "Action",
-            //     field: "action",
-            //     minWidth: 200,
-            //     responsive: 0,
-            //     formatter: actionFormatter
-            // },
-        ],
+                hozAlign: "left"
+            }
+        ]
     });
 };
 
@@ -274,24 +183,15 @@ const onPrint = () => {
     tabulator.value.print();
 };
 
-
 watch(
-    computed(() => userList.value),
+    computed(() => tableData.value),
     () => {
         initTabulator();
-        tabulator.value.on("rowClick", function (e, row) {
-            router.push({
-                name: "userProfile",
-                params: {
-                    id: row.getData().id
-                }
-            });
-        });
     }
 );
 
 onMounted(async () => {
-    userList.value = await userStore.getUsersList();
+    tableData.value = await userStore.getUserFiatWithdrawals(route.params.id);
     reInitOnResizeWindow();
 });
 </script>

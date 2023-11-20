@@ -129,11 +129,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
                     //     pageName: "settings",
                     //     title: "Password change",
                     // },
-                    {
-                        icon: "KeyIcon",
-                        pageName: "settings",
-                        title: "Set account Pin",
-                    },
+                    // {
+                    //     icon: "KeyIcon",
+                    //     pageName: "settings",
+                    //     title: "Set account Pin",
+                    // },
                     {
                         icon: "SlidersIcon",
                         pageName: "settings",

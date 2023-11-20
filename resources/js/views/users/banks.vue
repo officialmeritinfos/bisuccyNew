@@ -65,7 +65,7 @@ import { helper as $h } from "@/utils/helper";
 const userStore = useUserStore();
 
 // Declare the variables
-const userList = ref([]);
+const usersBanks = ref([]);
 const tableRef = ref();
 const tabulator = ref();
 
@@ -80,7 +80,7 @@ const initTabulator = () => {
       layout: "fitColumns",
       responsiveLayout: "collapse",
       placeholder: "No matching records found",
-      data: userList.value,
+      data: usersBanks.value,
       columns: [
           {
             title: "DATE",
@@ -195,14 +195,14 @@ const onPrint = () => {
 };
 
 watch(
-    computed(() => userList.value),
+    computed(() => usersBanks.value),
     () => {
         initTabulator();
     }
 );
 
 onMounted(async () => {
-  userList.value = await userStore.getUserBanks();
+  usersBanks.value = await userStore.getUsersBanks();
   reInitOnResizeWindow();
 });
 </script>

@@ -27,9 +27,15 @@ const changePassword = async (payload) => {
     return response.data.data;
 };
 
-// Get admin profile
+// Get dashboard stats
 export const getDashboardData = async () => {
     const response = await dashboardApi.get(`/dashboard/get-dashboard-data`);
+    return response.data.data;
+}
+
+// Get dashboard stats
+export const getDashboardTransactions = async () => {
+    const response = await dashboardApi.get(`/dashboard/get-transactions-data`);
     return response.data.data;
 }
 
@@ -37,5 +43,6 @@ export default {
     getAdminDetails,
     setUserPin,
     changePassword,
-    getDashboardData
+    getDashboardData,
+    getDashboardTransactions
 }

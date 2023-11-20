@@ -27,6 +27,10 @@ class Dashboard extends BaseController
     {
         return view('dashboard.profile');
     }
+    public function setPinlandingPage()
+    {
+        return view('dashboard.pin');
+    }
     //set account pin for admin
     public function setPin(Request $request)
     {
@@ -87,7 +91,7 @@ class Dashboard extends BaseController
             return $this->sendError('account.error',['error'=>'Unauthorized access']);
         }
         $dataResponse=[
-            'name'=>$user->id,'email'=>$user->email,'phone'=>$user->phone,
+            'name'=>$user->name,'email'=>$user->email,'phone'=>$user->phone,
             'reference'=>$user->userRef,'twoFactor'=>($user->twoFactor==1)?'on':'off',
             'setPin'=>($user->setPin==1)?'yes':'no',
         ];

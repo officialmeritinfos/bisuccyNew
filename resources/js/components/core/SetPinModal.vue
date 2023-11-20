@@ -7,50 +7,27 @@
         <ModalBody class="grid grid-cols-12 gap-4 gap-y-3">
             <div class="col-span-12 md:col-span-6">
                 <label for="pin" class="form-label">{{ $t("new pin") }}</label>
-                <input
-                    id="pin"
-                    type="password"
-                    class="form-control"
-                    :placeholder="$t('pin placeholder')"
-                    v-model="userPin"
-                />
+                <input id="pin" name="userPin" type="password" class="form-control" :placeholder="$t('pin placeholder')"
+                    v-model="userPin" />
             </div>
             <div class="col-span-12 md:col-span-6">
                 <label for="pin" class="form-label">{{
                     $t("confirm pin")
                 }}</label>
-                <input
-                    id="confirmPin"
-                    type="password"
-                    class="form-control"
-                    :placeholder="$t('confirm pin')"
-                    v-model="confirmUserPin"
-                />
+                <input id="confirmPin" name="confirmUserPin"  type="password" class="form-control" :placeholder="$t('confirm pin')"
+                    v-model="confirmUserPin" />
             </div>
             <div class="col-span-12 md:col-span-6">
                 <label for="pin" class="form-label">{{ $t("password") }}</label>
-                <input
-                    id="password"
-                    type="password"
-                    class="form-control"
-                    :placeholder="$t('password')"
-                    v-model="password"
-                />
+                <input id="password" name="password" type="password" class="form-control" :placeholder="$t('password')"
+                    v-model="password" />
             </div>
         </ModalBody>
         <ModalFooter>
-            <button
-                type="button"
-                @click="hideModal"
-                class="btn btn-outline-secondary w-20 mr-1"
-            >
+            <button type="button" @click="hideModal" class="btn btn-outline-secondary w-20 mr-1">
                 {{ $t("cancel") }}
             </button>
-            <button
-                type="button"
-                class="btn btn-primary w-20"
-                @click="submitUserPin"
-            >
+            <button type="button" class="btn btn-primary w-20" @click="submitUserPin">
                 {{ $t("submit") }}
             </button>
         </ModalFooter>
@@ -78,7 +55,8 @@ const confirmUserPin = ref("");
 const password = ref("");
 
 const submitUserPin = async () => {
-    await dashboardStore
+    if(userPin.value &&  confirmUserPin.value && password.value) { 
+        await dashboardStore
         .setUserPin({
             pin: userPin.value,
             confirm_pin: confirmUserPin.value,
@@ -87,6 +65,8 @@ const submitUserPin = async () => {
         .then(() => {
             clearInput();
         });
+     }
+
 };
 const clearInput = () => {
     userPin.value = "";

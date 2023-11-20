@@ -29,6 +29,61 @@ class Users extends BaseController
     public function landingPage()
     {
         return view('users.index');
+    } 
+
+    public function userCryptoWithdrawalsLandingPage()
+    {
+        return view('users.withdrawals');
+    }
+
+    public function userDetailsLandingPage()
+    {
+        return view('users.user');
+    }
+
+    public function userDepositsLandingPage()
+    {
+        return view('users.deposits');
+    }
+
+    public function userSwapsLandingPage()
+    {
+        return view('users.swaps');
+    }
+
+    public function userPurchasesLandingPage()
+    {
+        return view('users.purchases');
+    }
+
+    public function userSalesLandingPage()
+    {
+        return view('users.sales');
+    }
+
+    public function userSignalPaymentsLandingPage()
+    {
+        return view('users.signals');
+    }
+
+    public function userFiatWithdrawalsLandingPage()
+    {
+        return view('users.fiat-withdrawals');
+    }
+
+    public function userBanksLandingPage()
+    {
+        return view('users.user-banks');
+    }
+
+    public function userReferralsLandingPage()
+    {
+        return view('users.referrals');
+    }
+
+    public function userVerificationLandingPage()
+    {
+        return view('users.verification');
     }
 
     public function getUsers($index = 0)

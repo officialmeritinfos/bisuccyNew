@@ -70,5 +70,16 @@
     "systemFiatAccounts": "System Fiat Accounts",
     "createSystemFiatAccount": "Create System Fiat",
     "profile": "My Profile",
-    "profile information": "Profile Information"
+    "profile information": "Profile Information",
+    "userProfile": "User Profile",
+    "userWithdrawals": "User Withdrawals",
+    "userDeposits": "User Deposits",
+    "userSwaps": "User Swaps",
+    "userPurchases": "User Purchases",
+    "userSales": "User Sales",
+    "userSignals": "User Signal Payments",
+    "userFiatWithdrawals": "User Fiat Withdrawals",
+    "userBanks": "User Banks",
+    "userReferrals" : "User Referrals",
+    "userVerification": "User Verification"
 }

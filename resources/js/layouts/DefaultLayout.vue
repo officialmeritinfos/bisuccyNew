@@ -121,10 +121,10 @@ import SetPinModal from "@/components/core/SetPinModal.vue";
 import ApprovalPinModal from "@/components/core/ApprovalPinModal.vue";
 import { linkTo, nestedMenu, enter, leave } from "./index";
 import dom from "@left4code/tw-starter/dist/js/dom";
-import { useDashboardStore } from "../stores/dashboard";
-import { useGlobalStore } from "../stores/global";
-import ErrorNotification from "../components/core/ErrorNotification.vue";
-import SuccessNotification from "../components/core/SuccessNotification.vue";
+import { useDashboardStore } from "@/stores/dashboard";
+import { useGlobalStore } from "@/stores/global";
+import ErrorNotification from "@/components/core/ErrorNotification.vue";
+import SuccessNotification from "@/components/core/SuccessNotification.vue";
 
 const route = useRoute();
 const router = useRouter();

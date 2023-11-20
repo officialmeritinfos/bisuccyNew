@@ -41,6 +41,7 @@ use Illuminate\Support\Facades\Route;
 
 /*=======================DASHBOARD CONTROLLER ROUTES==============*/
     Route::get('dashboard', [Dashboard::class, 'landingPage'])->name('index');//landing page
+    Route::get('set-pin', [Dashboard::class, 'setPinlandingPage'])->name('setPinlandingPage');// set pin landing page
     Route::post('dashboard/set-pin', [Dashboard::class, 'setPin'])
         ->name('setPin');//set account pin needed for approving transactions
     Route::get('dashboard/profile', [Dashboard::class, 'profileLandingPage'])
@@ -190,7 +191,7 @@ use Illuminate\Support\Facades\Route;
     Route::post('system-fiat-accounts/delete', [SystemFiatAccounts::class, 'delete'])
         ->name('deleteFiatAccount');//create a system fiat account resource
     /*=======================USER BANKS CONTROLLER ROUTES==============*/
-    Route::get('user-banks', [UserBanks::class, 'landingPage'])->name('userBanks');//landing page
+    Route::get('users-banks', [UserBanks::class, 'landingPage'])->name('userBanks');//landing page
     Route::get('user-banks/all/{index?}', [UserBanks::class, 'getBanks'])
         ->name('getUsersBanks');//fetch all user banks
     Route::get('user-banks/user/{user}/{index?}', [UserBanks::class, 'getBanksByUser'])
@@ -200,27 +201,49 @@ use Illuminate\Support\Facades\Route;
         ->name('users');//landing page
     Route::get('users/all/{index?}', [Users::class, 'getUsers'])
         ->name('getUsers');//get all users
-    Route::get('users/{userId}', [Users::class, 'getUserDetails'])
+    Route::get('users/{userId}', [Users::class, 'userDetailsLandingPage'])
+        ->name('userDetailsLandingPage');//fetch a single user's details
+    Route::get('/api/users/{userId}', [Users::class, 'getUserDetails'])
         ->name('getUserDetails');//fetch a single user's details
-    Route::get('users/withdrawals/{user}/{index?}', [Users::class, 'getUserWithdrawals'])
-        ->name('getUserCryptoWithdrawals');//fetch all the user withdrawals
-    Route::get('users/deposits/{user}/{index?}', [Users::class, 'getUserDeposits'])
+    Route::get('/api/users/withdrawals/{user}', [Users::class, 'userCryptoWithdrawalsLandingPage'])
+        ->name('userCryptoWithdrawalsLandingPage');
+    Route::get('/api/users/withdrawals/{user}/{index?}', [Users::class, 'getUserWithdrawals'])
+        ->name('getUserCryptoWithdrawals'); //fetch all the user withdrawals
+    Route::get('users/deposits/{user}', [Users::class, 'userDepositsLandingPage'])
+        ->name('userDepositsLandingPage');//fetch all the user deposits
+    Route::get('/api/users/deposits/{user}/{index?}', [Users::class, 'getUserDeposits'])
         ->name('getUserCryptoDeposits');//fetch all the user deposits
-    Route::get('users/swaps/{user}/{index?}', [Users::class, 'getUserSwaps'])
+    Route::get('users/swaps/{user}', [Users::class, 'userSwapsLandingPage'])
+        ->name('userSwapsLandingPage');//fetch all the user swappings
+    Route::get('/api/users/swaps/{user}/{index?}', [Users::class, 'getUserSwaps'])
         ->name('getUserSwaps');//fetch all the user swappings
-    Route::get('users/purchases/{user}/{index?}', [Users::class, 'getUserPurchases'])
+    Route::get('users/purchases/{user}}', [Users::class, 'userPurchasesLandingPage'])
+        ->name('userPurchasesLandingPage');//fetch all the user purchases
+    Route::get('/api/users/purchases/{user}/{index?}', [Users::class, 'getUserPurchases'])
         ->name('getUserPurchases');//fetch all the user purchases
-    Route::get('users/sales/{user}/{index?}', [Users::class, 'getUserSales'])
+    Route::get('users/sales/{user}', [Users::class, 'userSalesLandingPage'])
+        ->name('userSalesLandingPage');//fetch all the user sales
+    Route::get('/api/users/sales/{user}/{index?}', [Users::class, 'getUserSales'])
         ->name('getUserSales');//fetch all the user sales
-    Route::get('users/signal-payments/{user}/{index?}', [Users::class, 'getUserSignalPayments'])
+    Route::get('users/signal-payments/{user}', [Users::class, 'userSignalPaymentsLandingPage'])
+        ->name('userSignalPaymentsLandingPage');//fetch all the user signal payments
+    Route::get('/api/users/signal-payments/{user}/{index?}', [Users::class, 'getUserSignalPayments'])
         ->name('getUserPayments');//fetch all the user signal payments
-    Route::get('users/fiat-withdrawals/{user}/{index?}', [Users::class, 'getUserFiatWithdrawals'])
+    Route::get('users/fiat-withdrawals/{user}', [Users::class, 'userFiatWithdrawalsLandingPage'])
+        ->name('userFiatWithdrawalsLandingPage');//fetch all the user fiat withdrawals
+    Route::get('/api/users/fiat-withdrawals/{user}/{index?}', [Users::class, 'getUserFiatWithdrawals'])
         ->name('getUserFiatWithdrawals');//fetch all the user fiat withdrawals
-    Route::get('users/banks/{user}/{index?}', [Users::class, 'getUserBanks'])
+    Route::get('users/banks/{user}', [Users::class, 'userBanksLandingPage'])
+        ->name('userBanksLandingPage');//fetch all the user banks
+    Route::get('/api/users/banks/{user}/{index?}', [Users::class, 'getUserBanks'])
         ->name('getUserBanks');//fetch all the user banks
-    Route::get('users/referrals/{user}/{index?}', [Users::class, 'getUserReferrals'])
+    Route::get('users/referrals/{user}', [Users::class, 'userReferralsLandingPage'])
+        ->name('userReferralsLandingPage');//fetch all the user referrals
+    Route::get('/api/users/referrals/{user}/{index?}', [Users::class, 'getUserReferrals'])
         ->name('getUserReferrals');//fetch all the user referrals
-    Route::get('users/documents/{user}', [Users::class, 'userVerificationDocument'])
+    Route::get('users/documents/{user}', [Users::class, 'userVerificationLandingPage'])
+        ->name('userVerificationLandingPage');//fetch all the user verification documents
+    Route::get('/api/users/documents/{user}', [Users::class, 'userVerificationDocument'])
         ->name('userVerificationDocuments');//fetch all the user verification documents
     Route::post('user/top-up-balance', [Users::class, 'topUpUserBalance'])
         ->name('topUpUserBalance');//top up user balance
@@ -238,7 +261,7 @@ use Illuminate\Support\Facades\Route;
         ->name('deactivateNotification');//deactivate user notification
 
     /*=======================USER WALLETS CONTROLLER ROUTES==============*/
-    Route::get('user-wallets', [UserWallets::class, 'landingPage'])->name('userWallets');//landing page
+    Route::get('users-wallets', [UserWallets::class, 'landingPage'])->name('userWallets');//landing page
     Route::get('user-wallets/all/{index?}', [UserWallets::class, 'getWallets'])
         ->name('getUsersWallets');//fetch all wallets
     Route::get('user-wallets/user/all/{user}/{index?}', [UserWallets::class, 'getUserWallets'])

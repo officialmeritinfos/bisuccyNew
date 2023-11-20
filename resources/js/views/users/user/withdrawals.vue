@@ -1,6 +1,6 @@
 <template>
     <div class="intro-y flex flex-col sm:flex-row items-center mt-8">
-        <PageTitle :title="$t('users')" />
+        <PageTitle :title="$t('userWithdrawals')" />
     </div>
     <!-- BEGIN: HTML Table Data -->
     <div class="intro-y box p-5 mt-5">
@@ -48,18 +48,19 @@ import { ref, onMounted, watch, computed } from "vue";
 import xlsx from "xlsx";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import PageTitle from "@/components/core/PageTitle.vue";
-import { useUserStore } from "../../stores/user";
-import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/user";
+import { helper as $h } from "@/utils/helper";
+import { useRoute } from "vue-router";
 
 // Import the stores
 const userStore = useUserStore();
 
 // Declare the variables
-const userList = ref([]);
+const userWithdrawals = ref([]);
 const tableRef = ref();
 const tabulator = ref();
 
-const router = useRouter();
+const route = useRoute();
 
 const initTabulator = () => {
     tabulator.value = new Tabulator(tableRef.value, {
@@ -72,7 +73,7 @@ const initTabulator = () => {
         layout: "fitColumns",
         responsiveLayout: "collapse",
         placeholder: "No matching records found",
-        data: userList.value,
+        data: userWithdrawals.value,
         columns: [
             {
                 formatter: "responsiveCollapse",
@@ -85,44 +86,47 @@ const initTabulator = () => {
 
             // For HTML table
             {
-                title: "EMAIL",
+                title: "DATE CREATED",
                 minWidth: 200,
                 responsive: 0,
-                field: "email",
+                field: "dateCreated",
+                hozAlign: "left",
+                vertAlign: "middle",
+                headerHozAlign: "left",
+                formatter: function (cell) {
+                    return $h.formatDateFromUnix(cell.getValue(), 'DD/MM/YYYY')
+                },
+            },
+            {
+                title: "ASSET",
+                minWidth: 200,
+                responsive: 0,
+                field: "asset",
                 hozAlign: "left",
                 vertAlign: "middle",
                 headerHozAlign: "left",
             },
             {
-                title: "ACCT BAL",
+                title: "NAME",
                 minWidth: 200,
                 responsive: 0,
-                field: "accountBalance",
+                field: "coinName",
                 hozAlign: "left",
                 vertAlign: "middle",
                 headerHozAlign: "left",
             },
             {
-                title: "PHONE",
+                title: "FIAT EQUIVALENT",
                 minWidth: 200,
                 responsive: 0,
-                field: "phone",
-                hozAlign: "left",
-                vertAlign: "middle",
-                headerHozAlign: "left",
-            },
-            {
-                title: "PHONE VERIFIED",
-                minWidth: 200,
-                responsive: 0,
-                field: "phoneVerified",
+                field: "fiatEquivalent",
                 hozAlign: "left",
                 vertAlign: "middle",
                 headerHozAlign: "left",
             },
             {
                 title: "ADDRESS",
-                minWidth: 200,
+                minWidth: 400,
                 responsive: 0,
                 field: "address",
                 hozAlign: "left",
@@ -130,105 +134,32 @@ const initTabulator = () => {
                 headerHozAlign: "left",
             },
             {
-                title: "CITY",
+                title: "MEMO",
                 minWidth: 200,
                 responsive: 0,
-                field: "city",
-                vertAlign: "middle",
+                field: "memo",
                 hozAlign: "left",
+                vertAlign: "middle",
                 headerHozAlign: "left",
             },
             {
-                title: "STATE",
+                title: "REFERENCE",
                 minWidth: 200,
                 responsive: 0,
-                field: "state",
-                vertAlign: "middle",
+                field: "reference",
                 hozAlign: "left",
+                vertAlign: "middle",
                 headerHozAlign: "left",
             },
             {
-                title: "COUNTRY",
+                title: "STATUS",
                 minWidth: 200,
                 responsive: 0,
-                field: "city",
-                vertAlign: "middle",
+                field: "status",
                 hozAlign: "left",
+                vertAlign: "middle",
                 headerHozAlign: "left",
             },
-            {
-                title: "EMAIL VERIFIED",
-                minWidth: 200,
-                field: "emailVerified",
-                vertAlign: "middle",
-                hozAlign: "left",
-                headerHozAlign: "left",
-            },
-            {
-                title: "REF. BY",
-                minWidth: 200,
-                responsive: 1,
-                field: "refBy",
-                vertAlign: "middle",
-                hozAlign: "left",
-                headerHozAlign: "left",
-            },
-            {
-                title: "NOTIFICATION",
-                minWidth: 200,
-                responsive: 1,
-                field: "notification",
-                vertAlign: "middle",
-                hozAlign: "left",
-                headerHozAlign: "left",
-            },
-            {
-                title: "CAN BUY",
-                minWidth: 200,
-                responsive: 2,
-                field: "canBuy",
-                vertAlign: "middle",
-                hozAlign: "left",
-            },
-            {
-                title: "CAN SELL",
-                minWidth: 200,
-                responsive: 2,
-                field: "canSell",
-                vertAlign: "middle",
-                hozAlign: "left",
-            },
-            {
-                title: "CAN SWAP",
-                minWidth: 200,
-                responsive: 3,
-                field: "canSwap",
-                vertAlign: "middle",
-                hozAlign: "left",
-            },
-            {
-                title: "CAN SEND CRYPTO",
-                minWidth: 200,
-                responsive: 3,
-                field: "canSendCrypto",
-                vertAlign: "middle",
-                hozAlign: "left",
-            },
-            {
-                title: "2FA",
-                minWidth: 200,
-                responsive: 3,
-                field: "twoFactor",
-                vertAlign: "middle",
-                hozAlign: "left",
-            },
-            // {
-            //     title: "Action",
-            //     field: "action",
-            //     minWidth: 200,
-            //     responsive: 0,
-            //     formatter: actionFormatter
-            // },
         ],
     });
 };
@@ -274,24 +205,15 @@ const onPrint = () => {
     tabulator.value.print();
 };
 
-
 watch(
-    computed(() => userList.value),
+    computed(() => userWithdrawals.value),
     () => {
         initTabulator();
-        tabulator.value.on("rowClick", function (e, row) {
-            router.push({
-                name: "userProfile",
-                params: {
-                    id: row.getData().id
-                }
-            });
-        });
     }
 );
 
 onMounted(async () => {
-    userList.value = await userStore.getUsersList();
+    userWithdrawals.value = await userStore.getUserWithdrawals(route.params.id);
     reInitOnResizeWindow();
 });
 </script>

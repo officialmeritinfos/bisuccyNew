@@ -8,6 +8,7 @@ export const useDashboardStore = defineStore("dashboard", () => {
     // Set the default states
     const adminDetails = ref(null);
     const dashboardData = ref(null);
+    const dashboardTransactions = ref(null);
 
     // Perform some actions
     const getAdminDetails = async () => {
@@ -48,6 +49,13 @@ export const useDashboardStore = defineStore("dashboard", () => {
         await globalStore.setLoading(false);
     };
 
+    
+    const getDashboardTransactions = async () => {
+        await globalStore.setLoading(true);
+        dashboardTransactions.value = await dashboardApi.getDashboardTransactions();
+        await globalStore.setLoading(false);
+    };
+
 
     // expose necessary data
     return { 
@@ -56,6 +64,8 @@ export const useDashboardStore = defineStore("dashboard", () => {
         setUserPin,
         changePassword,
         getDashboardData,
-        dashboardData 
+        dashboardData,
+        getDashboardTransactions,
+        dashboardTransactions 
     };
 });
