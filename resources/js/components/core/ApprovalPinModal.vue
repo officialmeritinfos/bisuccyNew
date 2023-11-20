@@ -2,7 +2,7 @@
     <!-- BEGIN: Modal Content -->
     <Modal :show="isModalVisible" @hidden="hideModal">
         <ModalHeader>
-            <h2 class="font-medium text-base mr-auto">{{ $t("set pin") }}</h2>
+            <h2 class="font-medium text-base mr-auto">{{ $t("enter pin") }}</h2>
         </ModalHeader>
         <ModalBody class="grid grid-cols-12 gap-4 gap-y-3">
             <div class="col-span-12 md:col-span-6">

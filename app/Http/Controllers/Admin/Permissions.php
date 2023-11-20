@@ -14,8 +14,15 @@ class Permissions extends BaseController
 {
     public function landingPage()
     {
-
+        return view('staff.roles.index');
     }
+
+    public function createRoleLandingPage()
+    {
+        return view('staff.roles.create');
+    }
+
+
     //add role
     public function createRole(Request $request)
     {
@@ -88,6 +95,7 @@ class Permissions extends BaseController
     private function roleData($role): array
     {
         return [
+            'id' => $role->id,
             'name' => $role->name,
             'users' => ($role->users == 1) ? 'yes' : 'no',
             'staff' => ($role->staff == 1) ? 'yes' : 'no',

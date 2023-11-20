@@ -1,38 +1,39 @@
 <template>
   <div class="intro-y flex flex-col sm:flex-row items-center mt-8">
-    <PageTitle :title="$t('createSystemFiatAccount')" />
+      <PageTitle :title="$t('createStaff')" />
   </div>
 
   <Form :validation-schema="validationSchema" @submit="handleSubmit">
-    <div class="grid grid-cols-12">
-      <div class="col-span-12 lg:col-span-6">
-        <div class="intro-y box p-5 mt-5">
-          <CreateForm />
-          <div class="mt-6 flex justify-end">
-            <PrimaryButton type="submit" :text="$t('submit')" custom-class="w-24" />
+      <div class="grid grid-cols-12">
+          <div class="col-span-12 lg:col-span-6">
+              <div class="intro-y box p-5 mt-5">
+                  <CreateForm />
+                  <div class="mt-6 flex justify-end">
+                      <PrimaryButton type="submit" :text="$t('submit')" custom-class="w-24"/>
+                  </div>
+              </div>
           </div>
-        </div>
       </div>
-    </div>
   </Form>
 </template>
 
 <script setup>
 import { ref, watch, computed } from "vue";
 import PageTitle from "@/components/core/PageTitle.vue";
-import CreateForm from './forms/fiat.vue';
+import CreateForm from './forms/create.vue';
 import PrimaryButton from "@/components/core/PrimaryButton.vue";
 import { Form } from 'vee-validate';
 import * as Yup from 'yup';
 import { useRouter } from "vue-router";
-import { useSystemAccountsStore } from "@/stores/systemAccounts";
+import { useStaffStore } from "@/stores/staff";
 import { useGlobalStore } from "@/stores/global";
 
 // Import the stores
-const systemAccountsStore = useSystemAccountsStore();
+const staffStore = useStaffStore();
 const globalStore = useGlobalStore();
 
 const router = useRouter();
+
 
 const actionType = ref(null); // Use this to control approval and rejection. 1 for approve, 0 for reject.
 const approvalPin = computed(() => globalStore.approvalPin);
@@ -50,12 +51,12 @@ const startSubmissionProcess = async () => {
 };
 
 const completeSubmissionProcess = async () => {
-  await systemAccountsStore.addSystemFiatAccount({
+  await staffStore.createStaff({
     ...postPayload.value,
     pin: approvalPin.value
   }).then(async () => {
     await globalStore.clearApprovalPin();
-    router.push({ name: "systemFiatAccounts" });
+    router.push({ name: "staff" });
   })
 
 };
@@ -67,12 +68,11 @@ watch(() => approvalPin.value, () => {
   }
 });
 
-
-
 const validationSchema = Yup.object().shape({
-  bank: Yup.string().required().nullable().label("Bank"),
-  accountNumber: Yup.number().required().nullable().label("Account Number"),
-  accountName: Yup.string().required().nullable().label("Account Name"),
+  name: Yup.string().required().nullable().label("Name"),
+  email: Yup.string().email().required().nullable().label("Email"),
+  password: Yup.string().required().nullable().label("Password"),
+  role: Yup.number().required().nullable().label("Role").typeError('Invalid value'),
 });
 
 

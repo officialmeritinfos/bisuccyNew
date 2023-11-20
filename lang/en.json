@@ -41,6 +41,7 @@
     "new pin": "New Pin",
     "pin placeholder": "4-digit PIN",
     "confirm pin": "Confirm PIN",
+    "enter pin": "Approval PIN",
     "enter approval pin": "Enter approval PIN",
     "settings": "Settings",
     "settingsDetails": "Settings Details",
@@ -81,5 +82,12 @@
     "userFiatWithdrawals": "User Fiat Withdrawals",
     "userBanks": "User Banks",
     "userReferrals" : "User Referrals",
-    "userVerification": "User Verification"
+    "userVerification": "User Verification",
+    "staffList": "Staff List",
+    "createStaff": "Create Staff",
+    "staffDetails": "Staff Details",
+    "roles": "Roles",
+    "createRole": "Create Role",
+    "permissions": "Permissions",
+    "createPermission": "create Permission"
 }

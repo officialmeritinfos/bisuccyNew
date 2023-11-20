@@ -26,6 +26,7 @@ export const useMessagesStore = defineStore("messagesStore", () => {
             const response = await messagesApi.createMessage(payload);
             globalStore.loading = false;
             return response;
+            globalStore.setSuccessMessage(response?.message ? response.message : "Success" )
         } catch(err) {
             globalStore.loading = false;
             globalStore.setErrorMessage(err.response.data?.data?.error ? err.response.data.data.error : err.response.data.message )

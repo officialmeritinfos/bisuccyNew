@@ -141,13 +141,13 @@ export const useSideMenuStore = defineStore("sideMenu", {
                     },
                     {
                         icon: "UserPlusIcon",
-                        pageName: "settings",
+                        pageName: "staff",
                         title: "Staff",
                     },
                     {
                         icon: "TargetIcon",
-                        pageName: "settings",
-                        title: "Permission module",
+                        pageName: "roles",
+                        title: "Roles & Permissions",
                     },
                 ],
             },

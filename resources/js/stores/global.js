@@ -32,6 +32,7 @@ export const useGlobalStore = defineStore("globalStore", () => {
 
     const clearApprovalPin = () => {
         approvalPin.value = '';
+        showApprovalPinModal(false);
     }
 
     const setErrorMessage = (message) => {

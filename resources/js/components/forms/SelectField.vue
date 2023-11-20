@@ -7,7 +7,7 @@
       :options="{
         placeholder: '- search -',
       }"
-      class="relative w-full"
+      class="relative w-full form-control cursor-default"
     >
       <option></option>   
       <option v-for="option in formattedOptions" :key="option.value" :value="option.value">{{ option.label }}</option>

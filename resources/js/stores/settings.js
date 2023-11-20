@@ -28,6 +28,7 @@ export const useSettingsStore = defineStore("settingsStore", () => {
         try {
             const response = await settingsApi.createFiat(payload);
             globalStore.loading = false;
+            globalStore.setSuccessMessage(response?.message ? response.message : "Success" )
             return response;
         } catch(err) {
             globalStore.loading = false;

@@ -25,6 +25,7 @@ export const useNotificationsStore = defineStore("notificationsStore", () => {
         try {
             const response = await notificationsApi.createNotification(payload);
             globalStore.loading = false;
+            globalStore.setSuccessMessage(response?.message ? response.message : "Success" )
             return response;
         } catch(err) {
             globalStore.loading = false;

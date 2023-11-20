@@ -115,7 +115,8 @@ use Illuminate\Support\Facades\Route;
     /*=======================PERMISSIONS/ROLE CONTROLLER ROUTES==============*/
     Route::get('permissions', [Permissions::class, 'landingPage'])->name('permissions');//landing page
     Route::get('permissions/roles', [Permissions::class, 'getRoles'])->name('getPermissions');//fetch all
-    Route::post('permissions/create', [Permissions::class, 'createRole'])->name('createPermission');//creates
+    Route::get('permissions/create', [Permissions::class, 'createRoleLandingPage'])->name('createRoleLandingPage');//creates
+    Route::post('/api/permissions/create', [Permissions::class, 'createRole'])->name('createPermission');//creates
     /*=======================PURCHASES CONTROLLER ROUTES==============*/
     Route::get('purchases', [Purchases::class, 'landingPage'])->name('purchases');//landing page
     Route::get('purchases/all/{index?}', [Purchases::class, 'getPurchases'])->name('getPurchases');//fetch all purchases
@@ -156,7 +157,8 @@ use Illuminate\Support\Facades\Route;
         ->name('signalInputs');//fetch signal inputs
     /*=======================STAFF CONTROLLER ROUTES==============*/
     Route::get('staff', [Staff::class, 'landingPage'])->name('staff');//landing page
-    Route::post('staff/add', [Staff::class, 'addStaff'])->name('addStaff');//create staff resource
+    Route::get('/staff/create', [Staff::class, 'addStaffLandingPage'])->name('addStaffLandingPage');//create staff resource
+    Route::post('/api/staff/add', [Staff::class, 'addStaff'])->name('addStaff');//create staff resource
     Route::get('staff/all/{index?}', [Staff::class, 'getAllStaff'])->name('getStaff');//fetch all staff
     Route::get('staff/{id}', [Staff::class, 'getStaffDetail'])->name('getStaffDetail');//fetch single staff
     /*=======================SWAPS CONTROLLER ROUTES==============*/

@@ -61,6 +61,14 @@ import CreateSystemAccountsWithdrawals from "@/views/system-accounts/withdraw.vu
 import SystemFiatAccounts from "@/views/system-accounts/fiats.vue";
 import CreateSystemFiatAccount from "@/views/system-accounts/create-fiat.vue";
 
+
+// STAFF
+import Staff from "@/views/staff/index.vue";
+import CreateStaff from "@/views/staff/create.vue";
+import Roles from "@/views/staff/roles/index.vue";
+import CreateRole from "@/views/staff/roles/create.vue";
+
+
 const routes = [
     {
         path: "/dashboard",
@@ -251,7 +259,27 @@ const routes = [
         path: "/system-fiat-accounts/create",
         name: "createSystemFiatAccount",
         component: CreateSystemFiatAccount,
-    }
+    },
+    {
+        path: "/staff",
+        name: "staff",
+        component: Staff,
+    },
+    {
+        path: "/staff/create",
+        name: "createStaff",
+        component: CreateStaff,
+    },
+    {
+        path: "/permissions",
+        name: "roles",
+        component: Roles,
+    },
+    {
+        path: "/permissions/create",
+        name: "createRole",
+        component: CreateRole,
+    },
 ];
 
 const adminPrefix = window.appModule.adminPrefix;

@@ -25,6 +25,7 @@ export const useSignalsStore = defineStore("signalsStore", () => {
         try {
             const response = await signalsApi.createSignal(payload);
             globalStore.loading = false;
+            globalStore.setSuccessMessage(response?.message ? response.message : "Success" )
             return response;
         } catch(err) {
             globalStore.loading = false;

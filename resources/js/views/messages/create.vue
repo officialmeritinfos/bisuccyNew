@@ -38,7 +38,7 @@ const handleSubmit = async (values) => {
 }
 
 const validationSchema = Yup.object().shape({
-  title: Yup.string().required().nullable().label("Name"),
+  title: Yup.string().required().nullable().label("Title"),
   content: Yup.string().required().nullable().label("Content"),
   timeToBroadcast: Yup.date().required().nullable().label("Broadcast Time"),
   type: Yup.number().required().nullable().label("Type"),

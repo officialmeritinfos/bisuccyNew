@@ -17,7 +17,12 @@ class Staff extends BaseController
     use PubFunctions;
     public function landingPage()
     {
+        return view('staff.index');
+    }
 
+    public function addStaffLandingPage()
+    {
+        return view('staff.create');
     }
 
     //create staff
@@ -69,7 +74,7 @@ class Staff extends BaseController
                 to your portal.<br>
                 <p>Your unique password is <b>".$input['password']."</b></p>. Use this to log in to your staff account here:
                 <br>
-                 <a href='".route('admin.login')."'>".route('admin.login')."</a>
+                 <a href='".route('auth.login')."'>".route('auth.login')."</a>
             ";
             $user->notify(new AdminMail($user,$message,'Welcome to '.env('APP_NAME').' Staff Login'));
 
@@ -95,8 +100,13 @@ class Staff extends BaseController
         foreach ($users as $user) {
             $data = [
                 'id'=>$user->id,
+                'name'=>$user->name,
                 'reference'=>$user->userRef,
                 'email'=>$user->email,
+                'phone'=>$user->phone,
+                'role' => $user->role,
+                'twoFactor'=>($user->twoFactor==1)?'on':'off',
+                'emailVerified'=>($user->emailVerified==1)?'yes':'no',
             ];
             $dataCo[]=$data;
         }
