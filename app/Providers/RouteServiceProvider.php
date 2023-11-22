@@ -51,7 +51,7 @@ class RouteServiceProvider extends ServiceProvider
     protected function adminRoutes()
     {
         Route::name('admin.')->prefix(config('app.admin-route-prefix'))
-            ->middleware(['web','auth','twoFactor','isLoggedIn'])
+            ->middleware(['web','auth','twoFactor','isLoggedIn','isAdmin'])
             ->namespace($this->namespace)
             ->group(base_path('routes/admin.php'));
     }

@@ -2,8 +2,14 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\AccountControl;
 use App\Http\Middleware\EnsureAdminIsLoggedIn;
+use App\Http\Middleware\FundControl;
+use App\Http\Middleware\isAdmin;
+use App\Http\Middleware\SignalControl;
+use App\Http\Middleware\StaffControl;
 use App\Http\Middleware\TwoFactor;
+use App\Http\Middleware\UserControl;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -69,5 +75,11 @@ class Kernel extends HttpKernel
         'ability' => \Laravel\Sanctum\Http\Middleware\CheckForAnyAbility::class,
         'twoFactor'=>TwoFactor::class,
         'isLoggedIn'=>EnsureAdminIsLoggedIn::class,
+        'isAdmin'=>isAdmin::class,
+        'canFund'=>FundControl::class,
+        'accessUser'=>UserControl::class,
+        'accessSignal'=>SignalControl::class,
+        'accessStaff'=>StaffControl::class,
+        'accessAccount'=>AccountControl::class,
     ];
 }
