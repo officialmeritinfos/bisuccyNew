@@ -244,6 +244,58 @@ export const useUserStore = defineStore("userStore", () => {
         }
     };
 
+    const approveUserVerification = async (payload) => {
+        // approve user verification
+        globalStore.loading = true;
+        try {
+            const response = await userApi.approveUserVerification(payload);
+            globalStore.loading = false;
+            globalStore.setSuccessMessage(response?.message ? response.message : "Success" )
+        } catch(err) {
+            globalStore.loading = false;
+            globalStore.setErrorMessage(err.response.data?.data?.error ? err.response.data.data.error : err.response.data.message )
+        }
+    };
+
+    const rejectUserVerification = async (payload) => {
+        // reject user verification
+        globalStore.loading = true;
+        try {
+            const response = await userApi.rejectUserVerification(payload);
+            globalStore.loading = false;
+            globalStore.setSuccessMessage(response?.message ? response.message : "Success" )
+        } catch(err) {
+            globalStore.loading = false;
+            globalStore.setErrorMessage(err.response.data?.data?.error ? err.response.data.data.error : err.response.data.message )
+        }
+    };
+
+    const topUpUserBalance = async (payload) => {
+        // top up user balance
+        globalStore.loading = true;
+        try {
+            const response = await userApi.topUpUserBalance(payload);
+            globalStore.loading = false;
+            globalStore.setSuccessMessage(response?.message ? response.message : "Success" )
+        } catch(err) {
+            globalStore.loading = false;
+            globalStore.setErrorMessage(err.response.data?.data?.error ? err.response.data.data.error : err.response.data.message )
+        }
+    };
+
+    const subtractUserBalance = async (payload) => {
+        // subtract user balance
+        globalStore.loading = true;
+        try {
+            const response = await userApi.subtractUserBalance(payload);
+            globalStore.loading = false;
+            globalStore.setSuccessMessage(response?.message ? response.message : "Success" )
+        } catch(err) {
+            globalStore.loading = false;
+            globalStore.setErrorMessage(err.response.data?.data?.error ? err.response.data.data.error : err.response.data.message )
+        }
+    };
+
     // expose necessary data
     return {
         getUsersList,
@@ -259,6 +311,10 @@ export const useUserStore = defineStore("userStore", () => {
         getUserFiatWithdrawals,
         getUserBanks,
         getUserReferrals,
-        getUserVerification
+        getUserVerification,
+        approveUserVerification,
+        rejectUserVerification,
+        topUpUserBalance,
+        subtractUserBalance
     };
 });

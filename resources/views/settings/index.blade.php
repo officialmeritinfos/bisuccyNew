@@ -1,5 +1,5 @@
 <x-app-layout>
     <x-slot name="pageTitle">
-        {{ __('purchases') }}
+        {{ __('settings') }}
     </x-slot>
 </x-app-layout>

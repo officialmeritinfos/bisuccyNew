@@ -39,7 +39,6 @@ export const useStaffStore = defineStore("staffStore", () => {
         try {
             const response = await staffApi.getRoles();
             globalStore.loading = false;
-            globalStore.setSuccessMessage(response?.message ? response.message : "Success" )
             return response;
         } catch(err) {
             globalStore.loading = false;

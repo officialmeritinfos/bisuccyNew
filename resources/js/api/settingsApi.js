@@ -15,15 +15,25 @@ export const getFiatList = async () => {
     return response.data.data;
 }
 
-
-// Fiat Settings  API calls
 export const createFiat = async (payload) => {
     const response = await settingsApi.post('/fiats/create', payload);
+    return response.data.data;
+}
+
+export const getSettings = async () => {
+    const response = await settingsApi.get(`/settings/get`);
+    return response.data.data;
+}
+
+export const updateSettings = async (payload) => {
+    const response = await settingsApi.post('/settings/edit', payload);
     return response.data.data;
 }
 
 
 export default {
   getFiatList,
-  createFiat
+  createFiat,
+  getSettings,
+  updateSettings
 }

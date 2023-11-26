@@ -85,6 +85,27 @@ export const getUserVerification = async (id) => {
     return response.data.data;
 };
 
+export const approveUserVerification = async (payload) => {
+    const response = await userApi.post(`/users/documents/approve-verification`, payload);
+    return response.data.data;
+};
+
+export const rejectUserVerification = async (payload) => {
+    const response = await userApi.post(`/user/documents/reject-verification`, payload);
+    return response.data.data;
+};
+
+export const topUpUserBalance = async (payload) => {
+    const response = await userApi.post(`/user/top-up-balance`, payload);
+    return response.data;
+};
+
+export const subtractUserBalance = async (payload) => {
+    const response = await userApi.post(`/user/subtract-balance`, payload);
+    return response.data;
+};
+
+
 export default {
     getUsersList,
     createUser,
@@ -101,5 +122,9 @@ export default {
     getUserFiatWithdrawals,
     getUserBanks,
     getUserReferrals,
-    getUserVerification
+    getUserVerification,
+    approveUserVerification,
+    rejectUserVerification,
+    topUpUserBalance,
+    subtractUserBalance
 };

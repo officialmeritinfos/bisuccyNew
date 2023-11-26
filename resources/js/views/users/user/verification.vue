@@ -5,7 +5,9 @@
   <!-- BEGIN: HTML Table Data -->
   <div class="intro-y mt-5">
     <div class="flex justify-end mt-6">
-
+      <ApproveButton @click="startApprovalProcess" />
+      <RejectButton @click="startRejectionProcess" />
+      
     </div>
 
     <div class="grid grid-cols-12 gap-6">
@@ -59,29 +61,65 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import PageTitle from "@/components/core/PageTitle.vue";
+import ApproveButton from "@/components/core/ApproveButton.vue";
+import RejectButton from "@/components/core/RejectButton.vue";
 import { useUserStore } from "@/stores/user";
+import { useGlobalStore } from "@/stores/global";
 import { useRoute, useRouter } from "vue-router";
 
 // Import the stores
 const userStore = useUserStore();
+const globalStore = useGlobalStore();
 const verificationData = ref(null);
+const actionType = ref(null); // Use this to control approval and rejection. 1 for approve, 0 for reject.
+const approvalPin = computed(() => globalStore.approvalPin);
 
 const route = useRoute();
-
 const router = useRouter();
 
 const userId = route.params.id;
 
 
-const goToBanks = () => {
-  router.push({ name: "userBanks", params: { id: userId } });
+// Actions
+const startApprovalProcess = async () => {
+    actionType.value = 1;
+    await globalStore.showApprovalPinModal(true);
 };
 
-const goToReferrals = () => {
-  router.push({ name: "userReferrals", params: { id: userId } });
+const completeApprovalProcess = async () => {
+    await userStore.approveUserVerification({
+      docId: verificationData.value.id,
+        pin: approvalPin.value
+    });
+    globalStore.clearApprovalPin();
 };
+
+
+const startRejectionProcess = async () => {
+    actionType.value = 0;
+    await globalStore.showApprovalPinModal(true);
+};
+
+const completeRejectionProcess = async () => {
+    await userStore.rejectUserVerification({
+      docId: verificationData.value.id,
+        pin: approvalPin.value
+    });
+    globalStore.clearApprovalPin();
+};
+
+watch(() => approvalPin.value, () => {
+    // Watch to see if Approval Pin is received, then proceed to perform necessary action.
+    if (approvalPin.value && actionType.value === 1) {
+        completeApprovalProcess();
+    }
+
+    if (approvalPin.value && actionType.value === 0) {
+        completeRejectionProcess();
+    }
+});
 
 onMounted(async () => {
   verificationData.value = await userStore.getUserVerification(userId);

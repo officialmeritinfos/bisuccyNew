@@ -23,6 +23,7 @@ import Swaps from "@/views/swaps/index.vue";
 // SETTINGS 
 import FiatList from "@/views/settings/FiatList.vue";
 import CreateFiat from "@/views/settings/CreateFiat.vue";
+import Settings from "@/views/settings/index.vue";
 
 // USERS
 import Users from "@/views/users/index.vue";
@@ -108,7 +109,7 @@ const routes = [
     {
         path: "/settings",
         name: "settings",
-        component: Deposits,
+        component: Settings,
     },
     {
         path: "/fiats",

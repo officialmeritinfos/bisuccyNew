@@ -151,8 +151,8 @@ import PageTitle from "@/components/core/PageTitle.vue";
 import SlideOver from "@/components/core/SlideOver.vue";
 import ApproveButton from "@/components/core/ApproveButton.vue";
 import RejectButton from "@/components/core/RejectButton.vue";
-import { useDepositsStore } from "../../stores/deposits";
-import { useGlobalStore } from "../../stores/global";
+import { useDepositsStore } from "@/stores/deposits";
+import { useGlobalStore } from "@/stores/global";
 import { helper as $h } from "@/utils/helper";
 
 // Import the stores
