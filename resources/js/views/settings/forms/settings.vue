@@ -103,6 +103,10 @@ const currencyOptions = ref([
   {
     label: 'USD',
     value: 'USD'
+  },
+  {
+    label: 'EUR',
+    value: 'EUR'
   }
 ])
 
