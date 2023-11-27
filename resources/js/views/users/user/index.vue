@@ -7,8 +7,8 @@
     <div class="flex justify-end mt-6">
       <Dropdown>
         <DropdownToggle class="btn bg-white">
-         <span>User Menu </span>
-         <ChevronDownIcon class="w-4 h-4 ml-2"/>
+          <span>User Menu </span>
+          <ChevronDownIcon class="w-4 h-4 ml-2" />
         </DropdownToggle>
         <DropdownMenu class="w-48">
           <DropdownContent>
@@ -17,6 +17,14 @@
             <DropdownItem @click="goToVerification">
               <FileTextIcon class="w-4 h-4 mr-2" />
               Verification
+            </DropdownItem>
+            <DropdownItem @click="handleTopUp">
+              <PlusCircleIcon class="w-4 h-4 mr-2" />
+              Top Up
+            </DropdownItem>
+            <DropdownItem @click="handleSubtract">
+              <MinusCircleIcon class="w-4 h-4 mr-2" />
+              Subtract
             </DropdownItem>
             <DropdownItem @click="goToDeposits">
               <TrendingDownIcon class="w-4 h-4 mr-2" />
@@ -60,6 +68,35 @@
     </div>
 
     <div class="grid grid-cols-12 gap-6">
+      <!-- Top up form -->
+      <div v-if="showForm" class="col-span-12 md:col-span-6 box intro-y mt-6">
+        <template v-if="formType == 'add'">
+          <div class="intro-y px-5 py-5 border-b sm:py-3 border-slate-200/60 dark:border-darkmode-400">
+            <h2 class="mr-auto text-base font-medium">Top Up User Balance</h2>
+            <div class="grid gap-6 py-5">
+              <Form :validation-schema="validationSchema" @submit="handleSubmit">
+                <AmountForm />
+                <div class="mt-6 flex justify-end">
+                  <PrimaryButton type="submit" :text="$t('submit')" custom-class="w-24" />
+                </div>
+              </Form>
+            </div>
+          </div>
+        </template>
+        <template v-else>
+          <div class="intro-y px-5 py-5 border-b sm:py-3 border-slate-200/60 dark:border-darkmode-400">
+            <h2 class="mr-auto text-base font-medium">Subtract From User Balance</h2>
+            <div class="grid gap-6 py-5">
+              <Form :validation-schema="validationSchema" @submit="handleSubmit">
+                <AmountForm />
+                <div class="mt-6 flex justify-end">
+                  <PrimaryButton type="submit" :text="$t('submit')" custom-class="w-24" />
+                </div>
+              </Form>
+            </div>
+          </div>
+        </template>
+      </div>
       <!-- Profile Info -->
       <div class="col-span-12 box intro-y mt-6">
         <div class="flex items-center px-5 py-5 border-b sm:py-3 border-slate-200/60 dark:border-darkmode-400">
@@ -173,7 +210,8 @@
           </div>
           <div class="relative flex items-center mt-5">
             <div class="ml-4 mr-auto"><span class="font-medium">Photo</span>
-              <div class="mr-5 text-slate-500 sm:mr-5"> <img :src="userProfile?.photo" class="h-10 w-10 rounded-full" /> </div>
+              <div class="mr-5 text-slate-500 sm:mr-5"> <img :src="userProfile?.photo" class="h-10 w-10 rounded-full" />
+              </div>
             </div>
           </div>
           <div class="relative flex items-center mt-5">
@@ -223,14 +261,26 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, watch, computed, onMounted } from "vue";
 import PageTitle from "@/components/core/PageTitle.vue";
 import { useUserStore } from "@/stores/user";
 import { useRoute, useRouter } from "vue-router";
+import AmountForm from "./forms/amount.vue";
+import PrimaryButton from "@/components/core/PrimaryButton.vue";
+import * as Yup from 'yup';
+import { Form } from 'vee-validate';
+import { useGlobalStore } from "@/stores/global";
+
 
 // Import the stores
 const userStore = useUserStore();
 const userProfile = ref(null);
+const showForm = ref(false);
+const formType = ref('add');
+const postPayload = ref(null);
+const actionType = ref(null); // Use this to control approval and rejection. 1 for approve, 0 for reject.
+const approvalPin = computed(() => globalStore.approvalPin);
+const globalStore = useGlobalStore();
 
 const route = useRoute();
 
@@ -278,7 +328,65 @@ const goToVerification = () => {
   router.push({ name: "userVerification", params: { id: userId } });
 };
 
+const handleTopUp = () => {
+  showForm.value = true;
+  formType.value = 'add';
+};
+
+const handleSubtract = () => {
+  showForm.value = true;
+  formType.value = 'subtract';
+};
+
+const validationSchema = Yup.object().shape({
+  amount: Yup.number().required().nullable().label("Amount"),
+});
+
+const handleSubmit = async (values) => {
+  postPayload.value = {...values, id: userId}
+  startSubmissionProcess()
+}
+
+
+// Actions
+const startSubmissionProcess = async () => {
+  actionType.value = 1;
+  await globalStore.showApprovalPinModal(true);
+};
+
+const completeSubmissionProcess = async () => {
+  if(formType.value == 'add') {
+    await userStore.topUpUserBalance({
+      ...postPayload.value,
+      pin: approvalPin.value
+    }).then(async () => {
+      await globalStore.clearApprovalPin();
+      showForm.value = false;
+    })
+  } else {
+    await userStore.subtractUserBalance({
+      ...postPayload.value,
+      pin: approvalPin.value
+    }).then(async () => {
+      await globalStore.clearApprovalPin();
+      showForm.value = false;
+    })
+  }
+  getDataFromServer()
+};
+
+const getDataFromServer = async () => {
+  userProfile.value = await userStore.getUserProfile(userId); 
+}
+
+watch(() => approvalPin.value, () => {
+  // Watch to see if Approval Pin is received, then proceed to perform necessary action.
+  if (approvalPin.value && actionType.value === 1) {
+    completeSubmissionProcess();
+  }
+});
+
 onMounted(async () => {
-  userProfile.value = await userStore.getUserProfile(userId);
+  await getDataFromServer()
 });
 </script>

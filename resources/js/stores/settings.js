@@ -37,9 +37,38 @@ export const useSettingsStore = defineStore("settingsStore", () => {
         
     }
 
+    const getSettings = async () => {
+        // Get system settings
+        globalStore.loading = true;
+        try {
+            const response = await settingsApi.getSettings();
+            globalStore.loading = false;
+            return response;
+        } catch(err) {
+            globalStore.loading = false;
+            globalStore.setErrorMessage(err.response.data?.data?.error ? err.response.data.data.error : err.response.data.message )
+        } 
+    } 
+
+    const updateSettings = async (payload) => {
+        // Update system settings
+        globalStore.loading = true;
+        try {
+            const response = await settingsApi.updateSettings(payload);
+            globalStore.loading = false;
+            globalStore.setSuccessMessage(response?.message ? response.message : "Success" )
+            return response;
+        } catch(err) {
+            globalStore.loading = false;
+            globalStore.setErrorMessage(err.response.data?.data?.error ? err.response.data.data.error : err.response.data.message )
+        } 
+    }
+
     // expose necessary data
     return { 
       getFiatList,
-      createFiat
+      createFiat,
+      getSettings,
+      updateSettings
     };
 });

@@ -16,7 +16,7 @@ class GeneralSettings extends BaseController
 {
     public function landingPAge()
     {
-
+        return view('settings.index');
     }
 
     public function getSettings()
@@ -27,20 +27,20 @@ class GeneralSettings extends BaseController
             'name'=>$web->name,
             'email'=>$web->email,
             'phone'=>$web->phone,
-            'maintenance'=>($web->maintenance==1)?'on':'off',
-            'registration'=>($web->registration==1)?'on':'off',
-            'emailVerification'=>($web->emailVerification==1)?'off':'on',
-            'phoneVerification'=>($web->phoneVerification==1)?'off':'on',
-            'twoFactor'=>($web->twoFactor==1)?'on':'off',
+            'maintenance'=>($web->maintenance==1)?'1':'0',
+            'registration'=>($web->registration==1)?'1':'0',
+            'emailVerification'=>($web->emailVerification==1)?'1':'0',
+            'phoneVerification'=>($web->phoneVerification==1)?'1':'0',
+            'twoFactor'=>($web->twoFactor==1)?'1':'0',
             'withdrawalCharge'=>$web->withdrawalCharge,
             'depositCharge'=>$web->depositCharge,
             'sellCharge'=>$web->sellCharge,
             'buyCharge'=>$web->buyCharge,
-            'canSend'=>($web->canSend==1)?'yes':'no',
-            'canDeposit'=>($web->canDeposit)?'yes':'no',
-            'canSell'=>($web->canSell)?'yes':'no',
-            'canBuy'=>($web->canBuy)?'yes':'no',
-            'canSwap'=>($web->canSwap)?'yes':'no',
+            'canSend'=>($web->canSend==1)?'1':'0',
+            'canDeposit'=>($web->canDeposit)?'1':'0',
+            'canSell'=>($web->canSell)?'1':'0',
+            'canBuy'=>($web->canBuy)?'1':'0',
+            'canSwap'=>($web->canSwap)?'1':'0',
             'mainCurrency'=>$web->mainCurrency,
             'refBonus'=>$web->refBonus
         ];
@@ -60,7 +60,7 @@ class GeneralSettings extends BaseController
             'registration'=>['required','integer'],
             'emailVerification'=>['required','integer'],
             'phoneVerification'=>['required','integer'],
-            'twoFactor'=>['required','intger'],
+            'twoFactor'=>['required','integer'],
             'withdrawalCharge'=>['required','numeric'],
             'depositCharge'=>['required','numeric'],
             'sellCharge'=>['required','numeric'],
