@@ -1,7 +1,7 @@
 <template>
     <div class="intro-y flex flex-col sm:flex-row items-center mt-8">
         <PageTitle :title="$t('systemAccounts')">
-            <PrimaryButton :text="$t('withdrawals')" @click="goToWithdrawals"/>
+            <!-- <PrimaryButton :text="$t('withdrawals')" @click="goToWithdrawals"/> -->
         </PageTitle>
     </div>
     <!-- BEGIN: HTML Table Data -->

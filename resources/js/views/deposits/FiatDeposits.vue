@@ -124,13 +124,13 @@
                         STATUS:
                     </dt>
                     <dd :class="{
-                    'text-warning' : depositDetails.status === 'pending approval',
+                    'text-warning' : depositDetails.status === 'pending payment',
                     'text-danger' : depositDetails.status === 'cancelled',
                     'text-success' : depositDetails.status === 'completed'
                     }">{{ depositDetails.status }}</dd>
                 </dl>
             </div>
-            <div v-if="depositDetails.status === 'pending approval'" class="w-full flex mt-6">
+            <div v-if="depositDetails.status === 'pending payment'" class="w-full flex mt-6">
                 <div
                     class="w-full flex flex-wrap justify-center lg:justify-end"
                 >
