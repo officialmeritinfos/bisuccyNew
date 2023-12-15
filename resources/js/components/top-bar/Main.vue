@@ -64,7 +64,7 @@
       >
         <img
           alt="Bisuccy User"
-          src="/img/user-profile-icon.png"
+          :src="UserProfileIcon"
         />
       </DropdownToggle>
       <DropdownMenu class="w-56">
@@ -99,6 +99,7 @@ import { ref, computed } from "vue";
 import {useGlobalStore} from "@/stores/global";
 import { useDashboardStore } from "@/stores/dashboard";
 import { useRouter } from "vue-router";
+import UserProfileIcon from '@/assets/images/user-profile-icon.png';
 
 const dashboardStore = useDashboardStore();
 
