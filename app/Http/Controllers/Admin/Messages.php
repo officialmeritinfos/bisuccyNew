@@ -77,6 +77,7 @@ class Messages extends BaseController
                 'timeToBroadcast'=>date('d-M-Y h:i:s',$time),
                 'status'=>($message->broadCasted==1)?'completed':'pending'
             ];
+            return $this->sendResponse($dataResponse, 'Notification created.');
         }
         return $this->sendError('message.error',['error'=>'Something went wrong']);
     }
@@ -96,7 +97,7 @@ class Messages extends BaseController
                 'title'=>$notification->title,
                 'content'=>$notification->content,
                 'createdAt'=>strtotime($notification->created_at),
-                'staff'=>$user->name,'userId'=>$user->id,
+                'staff'=>$user->name??'N/A','userId'=>$user->id,
                 'timeToBroadcast'=>$notification->timeToBroadcast,
                 'status'=>($notification->broadCasted==1)?'completed':'pending'
             ];
@@ -117,7 +118,7 @@ class Messages extends BaseController
             'title'=>$notification->title,
             'content'=>$notification->content,
             'createdAt'=>strtotime($notification->created_at),
-            'staff'=>$user->name,'userId'=>$user->id,
+            'staff'=>$user->name??'N/A','userId'=>$user->id,
             'timeToBroadcast'=>$notification->timeToBroadcast,
             'status'=>($notification->broadCasted==1)?'completed':'pending'
         ];
