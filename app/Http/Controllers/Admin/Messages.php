@@ -97,7 +97,7 @@ class Messages extends BaseController
                 'title'=>$notification->title,
                 'content'=>$notification->content,
                 'createdAt'=>strtotime($notification->created_at),
-                'staff'=>$user->name??'N/A','userId'=>$user->id,
+                'staff'=>$user->name??'N/A','userId'=>$user->id??'N/A',
                 'timeToBroadcast'=>$notification->timeToBroadcast,
                 'status'=>($notification->broadCasted==1)?'completed':'pending'
             ];
@@ -118,7 +118,7 @@ class Messages extends BaseController
             'title'=>$notification->title,
             'content'=>$notification->content,
             'createdAt'=>strtotime($notification->created_at),
-            'staff'=>$user->name??'N/A','userId'=>$user->id,
+            'staff'=>$user->name??'N/A','userId'=>$user->id??'N/A',
             'timeToBroadcast'=>$notification->timeToBroadcast,
             'status'=>($notification->broadCasted==1)?'completed':'pending'
         ];
