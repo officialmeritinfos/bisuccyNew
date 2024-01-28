@@ -145,6 +145,9 @@ const initTabulator = () => {
               hozAlign: "left",
               vertAlign: "middle",
               headerHozAlign: "left",
+              formatter: function (cell) {
+                  return $h.formatDateFromUnix(cell.getValue(), 'DD/MM/YYYY')
+              },
           },
           {
               title: "STATUS",

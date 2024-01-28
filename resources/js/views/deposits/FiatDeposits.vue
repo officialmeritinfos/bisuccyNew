@@ -245,6 +245,13 @@ const initTabulator = () => {
                 vertAlign: "middle",
                 hozAlign: "left",
             },
+            {
+                title: "STATUS",
+                minWidth: 200,
+                field: "status",
+                vertAlign: "middle",
+                hozAlign: "left",
+            },
         ],
     });
 };

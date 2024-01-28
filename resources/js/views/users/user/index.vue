@@ -230,7 +230,7 @@
             </div>
           </div>
           <div class="relative flex items-center mt-5">
-            <div class="ml-4 mr-auto"><span class="font-medium">Referral Earning</span>
+            <div class="ml-4 mr-auto"><span class="font-medium">Referral Earnings</span>
               <div class="mr-5 text-slate-500 sm:mr-5"> {{ userProfile?.referralEarning }} </div>
             </div>
           </div>
