@@ -133,14 +133,11 @@ class FiatWithdrawals extends BaseController
             case 1:
                 $status = 'completed';
                 break;
-            case 2:
-                $status = 'pending payment';
-                break;
             case 3:
                 $status = 'cancelled';
                 break;
             default:
-                $status = 'pending approval';
+                $status = 'pending payment';
                 break;
         }
         $data = [
